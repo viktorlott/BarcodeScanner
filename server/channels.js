@@ -20,10 +20,10 @@ module.exports = () => app => {
 	const io = app.get("socket")
 
 	io.on("connection", socket => {
-		const { application="scanner" } = socket.handshake.query
+		const { defaultRoom="scanner" } = socket.handshake.query
 
 
-		socket.join(application)
+		socket.join(defaultRoom)
 
 		socket.on("/join", joinRoom(io, socket))
 		socket.on("/leave", leaveRoom(io, socket))

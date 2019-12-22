@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
 import Quagga from 'quagga';
 import config from './config'
+import { useSelector, useDispatch } from 'react-redux'
 import { addProduct, changeProduct } from '../actions/products.action';
 
 
@@ -28,10 +28,6 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket,  
 
 	useEffect(() => {
 		isDisabled.current = false
-
-		socket.on("connect", msg => console.log("Connected -> " , socket.id))
-
-		socket.on("/recieve/barcode", barcode => console.log("Barcode -> " , barcode))
 
 		const cb = err => {
 			if (err) {

@@ -9,7 +9,7 @@ body {
   height: 100%;
   overflow: hidden;
   padding: 0;
-  background: black;
+  /* background: black; */
   position: fixed;
 
 }

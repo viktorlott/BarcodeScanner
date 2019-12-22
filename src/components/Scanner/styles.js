@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 
-
+import { Link, NavLink } from 'react-router-dom'
 
 
 export const Container = styled.div`
@@ -9,6 +9,8 @@ export const Container = styled.div`
   height: 100%;
   overflow: hidden;
   background: black;
+  position: fixed;
+  z-index: 1000;
 
 
 `
@@ -207,7 +209,7 @@ export const List = styled.div`
 
 `
 
-export const ButtonDiv = styled.div`
+export const ButtonDiv = styled(NavLink)`
   height: 60;
   width: 100%;
   border-radius: 0; 
@@ -228,13 +230,14 @@ export const ButtonDiv = styled.div`
   position: absolute;
   top: 0;
   padding: 10px;
+  color: white;
 `
 
 export const Spinner = () => (
-<div className="spinner">
-  <div className="rect1"></div>
-  <div className="rect2"></div>
-  <div className="rect3"></div>
+<div class="spinner">
+  <div class="rect1"></div>
+  <div class="rect2"></div>
+  <div class="rect3"></div>
   {/* <div class="rect4"></div> */}
   {/* <div class="rect5"></div> */}
 </div>

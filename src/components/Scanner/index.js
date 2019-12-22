@@ -27,6 +27,8 @@ import {
 	Spinner,
 } from './styles'
 
+import { Link, useHistory } from 'react-router-dom'
+
 
 import { connect } from 'react-redux'
 
@@ -34,12 +36,10 @@ import { connect } from 'react-redux'
 import fetchBarcode from './Utils/maxiproductfetcher'
   
 
-const socket = io("https://develottment.com", { path: "/stream"})
 
 
 
-
-function Scanner() {
+function Scanner({ socket }) {
   const [bind, state, ctl] = useScanner({ fetchBarcode, socket })
   const barcodeRef = useRef()
 
@@ -62,6 +62,7 @@ function Scanner() {
       <ScannerContainer isPaused={ctl.isPaused}>
           <TopBlock>
             <Darker flexEnd={true}>
+			<ButtonDiv to="/" style={{position: "absolute", top: 0, right: 0}}>Back</ButtonDiv>
               <h4 style={{display: state.match ? "none" : "block"}}>Scan Barcode</h4>
             </Darker>
           </TopBlock>
@@ -82,7 +83,7 @@ function Scanner() {
             <CenterRight/>
           </CenterBlock>
           <BottomBlock>
-            <Darker flexStart={true}>
+            <Darker flexStart={true}>	
                 <List>
                   <ul>
                     <li style={{marginBottom: 5}}><h4>Barkoder</h4></li>
