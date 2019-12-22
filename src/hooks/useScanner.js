@@ -23,7 +23,7 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket })
 	useEffect(() => {
 		isDisabled.current = false
 
-		socket.on("connection", msg => console.log("Connected -> " , msg))
+		socket.on("connect", msg => console.log("Connected -> " , socket.id))
 		socket.on("/recieve/barcode", msg => console.log("Connected -> " , msg))
 
 		const cb = err => {
@@ -69,6 +69,8 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket })
 			drawingCanvas = Quagga.canvas.dom.overlay;
 			drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
 
+			socket.emit("/post/barcode", "scanner", data.codeResult.code)
+
 			setState(prev => ({...prev, match: data.codeResult }))
 			codes.current = {}
 
@@ -76,7 +78,7 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket })
 			pauseCTL.on()
 			isDisabled.current = true
 
-			socket.emit("/post/barcode", data.codeResult.code)
+			
 		}
 
 		if (!codes.current[data.codeResult.code]) codes.current[data.codeResult.code] = 0
