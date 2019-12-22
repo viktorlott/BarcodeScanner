@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux'
 import Quagga from 'quagga';
 import config from './config'
+import { addProduct, changeProduct } from '../actions/products.action';
+
+
 
 
 
@@ -12,19 +15,23 @@ function useToggle() {
 	return [state, {on, off}]
 }
 
-function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket }) {
+function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket,  }) {
 	const [state, setState] = useState({ match: false, processing: false })
-	const [list, setList] = useState([])
+	// const [list, setList] = useState([])
+	const list = useSelector(state => state.products)
 	const [isPaused, pauseCTL] = useToggle()
 	const scanner = useRef()
 	const codes = useRef({})
 	const isDisabled = useRef()
+	const dispatch = useDispatch()
+
 
 	useEffect(() => {
 		isDisabled.current = false
 
 		socket.on("connect", msg => console.log("Connected -> " , socket.id))
-		socket.on("/recieve/barcode", msg => console.log("Connected -> " , msg))
+
+		socket.on("/recieve/barcode", barcode => console.log("Barcode -> " , barcode))
 
 		const cb = err => {
 			if (err) {
@@ -50,16 +57,16 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket })
 	useEffect(() => {
 		if(state.match) {
 			fetchBarcode(state.match.code).then(product => product.json()).then(product => {
-				setList(prev => prev.map(result => {
-					if(result.code === product.productid) {
-						result.product = product
-					}
-					return result
-				}))
+				if(product) {
+					dispatch(changeProduct(product))
+				}
 			})
 		}
 
 	}, [state.match])
+
+
+
 
 
 	const detected = useCallback(data => {
@@ -73,8 +80,7 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket })
 
 			setState(prev => ({...prev, match: data.codeResult }))
 			codes.current = {}
-
-			setList(prev => ([...prev, data.codeResult]))
+			dispatch(addProduct(data.codeResult))
 			pauseCTL.on()
 			isDisabled.current = true
 
