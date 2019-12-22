@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"scanner.products"}],"uuid":"c6f3db6ec24c460bb48c041b03b52f4e"}
