@@ -12,7 +12,7 @@ function useToggle() {
 	return [state, {on, off}]
 }
 
-function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode}) {
+function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket }) {
 	const [state, setState] = useState({ match: false, processing: false })
 	const [list, setList] = useState([])
 	const [isPaused, pauseCTL] = useToggle()
@@ -22,6 +22,10 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode}) {
 
 	useEffect(() => {
 		isDisabled.current = false
+
+		socket.on("connection", msg => console.log("Connected -> " , msg))
+		socket.on("/recieve/barcode", msg => console.log("Connected -> " , msg))
+
 		const cb = err => {
 			if (err) {
 				console.log(err);
@@ -45,7 +49,7 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode}) {
 
 	useEffect(() => {
 		if(state.match) {
-			fetchBarcode(state.match.code).then(product => {
+			fetchBarcode(state.match.code).then(product => product.json()).then(product => {
 				setList(prev => prev.map(result => {
 					if(result.code === product.productid) {
 						result.product = product
@@ -71,6 +75,8 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode}) {
 			setList(prev => ([...prev, data.codeResult]))
 			pauseCTL.on()
 			isDisabled.current = true
+
+			socket.emit("/post/barcode", data.codeResult.code)
 		}
 
 		if (!codes.current[data.codeResult.code]) codes.current[data.codeResult.code] = 0

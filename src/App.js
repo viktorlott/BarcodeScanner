@@ -7,6 +7,11 @@ import io from 'socket.io-client'
 function fetchBarcode(id) {
   return fetch("https://develottment.com/products/"+id, {mode: 'cors'})
 }
+
+const socket = io("https://develottment.com", { path: "/stream"})
+
+
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -242,17 +247,13 @@ const Spinner = () => (
 )
 
 function App() {
-  const [bind, state, ctl] = useScanner({ fetchBarcode })
+  const [bind, state, ctl] = useScanner({ fetchBarcode, socket })
   const barcodeRef = useRef()
-  const socket = useRef()
 
 
   useEffect(() => {
-    socket.current = io("https://develottment.com", { path: "/stream"})
 
-    socket.current.on("connection", msg => console.log("Connected -> " , msg))
-    socket.current.on("/recieve/barcode", msg => console.log("Connected -> " , msg))
-    
+
   },[])
 
   useEffect(() => {
