@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Quagga from 'quagga';
 import config from './config'
 import { useSelector, useDispatch } from 'react-redux'
-import { addProduct, changeProduct } from '../actions/products.action';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT } from '../constants';
 
 
 
@@ -15,9 +15,8 @@ function useToggle() {
 	return [state, {on, off}]
 }
 
-function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket,  }) {
+function useScanner({onStart=() => {}, onMatch=() => {} }) {
 	const [state, setState] = useState({ match: false, processing: false })
-	// const [list, setList] = useState([])
 	const list = useSelector(state => state.products)
 	const [isPaused, pauseCTL] = useToggle()
 	const scanner = useRef()
@@ -50,19 +49,9 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket,  
 	}, [])
 
 
-	useEffect(() => {
-		if(state.match) {
-			fetchBarcode(state.match.code).then(product => product.json()).then(product => {
-				if(product) {
-					dispatch(changeProduct(product))
-				}
-			})
-		}
 
-	}, [state.match])
-
-
-
+	const emitBarcode = useCallback(data => void dispatch({ type: PRODUCT_EMIT, payload: data.codeResult}), [])
+	const fetchBarcodeProduct = useCallback(data =>  void dispatch({ type: PRODUCT_REQUESTED, payload: data.codeResult}), [])
 
 
 	const detected = useCallback(data => {
@@ -72,11 +61,12 @@ function useScanner({onStart=() => {}, onMatch=() => {}, fetchBarcode, socket,  
 			drawingCanvas = Quagga.canvas.dom.overlay;
 			drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
 
-			socket.emit("/post/barcode", "scanner", data.codeResult.code)
+			emitBarcode(data)
+			fetchBarcodeProduct(data)
 
 			setState(prev => ({...prev, match: data.codeResult }))
 			codes.current = {}
-			dispatch(addProduct(data.codeResult))
+
 			pauseCTL.on()
 			isDisabled.current = true
 

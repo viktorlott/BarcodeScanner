@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import useScanner from '../../hooks/useScanner'
 import JsBarcode from "jsbarcode";
 import io from 'socket.io-client'
-
 import {
 	Container,
 	ScannerContainer,
@@ -26,33 +25,32 @@ import {
 	ButtonDiv,
 	Spinner,
 } from './styles'
-
+import { Icon } from 'antd'
 import { Link, useHistory } from 'react-router-dom'
 
 
-import { connect } from 'react-redux'
-
-
-import fetchBarcode from './Utils/maxiproductfetcher'
-  
 
 
 
+const jsBarcodeConfig = state => ({
+	format: state.match.format.replace("_", "").toUpperCase(),
+	lineColor: "#ffffff",
+	background: "#000000",
+	width: 2,
+	height: 40,
+	displayValue: true
+  })
 
-function Scanner({ socket }) {
-  const [bind, state, ctl] = useScanner({ fetchBarcode, socket })
+
+
+
+function Scanner() {
+  const [bind, state, ctl] = useScanner({})
   const barcodeRef = useRef()
 
   useEffect(() => {
     if(state.match) {
-      JsBarcode(barcodeRef.current, state.match.code, {
-        format: state.match.format.replace("_", "").toUpperCase(),
-        lineColor: "#ffffff",
-        background: "#000000",
-        width: 2,
-        height: 40,
-        displayValue: true
-      });
+      JsBarcode(barcodeRef.current, state.match.code, jsBarcodeConfig(state));
     }
   },[state.match]) 
 
@@ -62,8 +60,10 @@ function Scanner({ socket }) {
       <ScannerContainer isPaused={ctl.isPaused}>
           <TopBlock>
             <Darker flexEnd={true}>
-			<ButtonDiv to="/" style={{position: "absolute", top: 0, right: 0}}>Back</ButtonDiv>
-              <h4 style={{display: state.match ? "none" : "block"}}>Scan Barcode</h4>
+				<ButtonDiv to="/" style={{position: "absolute", top: 0, right: 0}}>
+					<Icon type="close"/>
+				</ButtonDiv>
+              	<h4 style={{display: state.match ? "none" : "block"}}>Scan Barcode</h4>
             </Darker>
           </TopBlock>
           <CenterBlock>

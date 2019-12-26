@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
+import { Button, Radio, Icon } from 'antd';
 
 import { Link, NavLink } from 'react-router-dom'
 
@@ -75,10 +76,13 @@ export const Darker = styled.div`
   display: flex;
   justify-content: center;
   align-items: ${props => props.flexStart ? "flex-start" : props.flexEnd ? "flex-end" : "flex-end"};
-  color: white;
+  color: white!important;
   text-transform: capitalize;
   position: relative;
   overflow: hidden;
+  & > h4 {
+	color: white!important;
+  }
 `
 
 
@@ -209,13 +213,15 @@ export const List = styled.div`
 
 `
 
+
+
 export const ButtonDiv = styled(NavLink)`
-  height: 60;
-  width: 100%;
+  /* height: 60; */
+  width: 50px;
   border-radius: 0; 
   outline: none;
   text-align: center; 
-  background-color: #1890ff; 
+  background-color: #ff4d4f; 
   vertical-align: middle; 
   display: flex;
   justify-content: center; 
@@ -224,20 +230,31 @@ export const ButtonDiv = styled(NavLink)`
   text-transform: capitalize;
   font-size: 16;
   border-radius: 1;
-  border: 1px solid #1890ff;
+  border: 1px solid #ff4d4f;
   box-shadow: 0 2px 0 rgba(0,0,0,0.045);
   cursor: pointer;
   position: absolute;
   top: 0;
+  font-weight: 800;
   padding: 10px;
   color: white;
+  border-bottom-left-radius: 2px;
+  transition: color 0.2s, background-color 0.2s, border 0.2s;
+
+  &:hover {
+	  background-color: #ff7875;
+	  border: 1px solid #ff7875;
+	  color: white;
+
+
+  }
 `
 
 export const Spinner = () => (
-<div class="spinner">
-  <div class="rect1"></div>
-  <div class="rect2"></div>
-  <div class="rect3"></div>
+<div className="spinner">
+  <div className="rect1"></div>
+  <div className="rect2"></div>
+  <div className="rect3"></div>
   {/* <div class="rect4"></div> */}
   {/* <div class="rect5"></div> */}
 </div>

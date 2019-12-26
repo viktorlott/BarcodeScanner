@@ -35,6 +35,10 @@ function fetchBarcode(search_key) {
 }
 
 
+			// fetchMaxiProduct(barcode)
+			// 	.then(product => product.json())
+			// 	.then(product => void product && dispatch(populateProductWithData(product)))
+			
 
 // sudo certbot certonly --manual --preferred-challenges=dns --email viktor@develottment.com --server https://acme-v02.api.letsencrypt.org/directory --agree-tos -d *.develottment.com
 

@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components'
 import useScanner from './hooks/useScanner'
 import JsBarcode from "jsbarcode";
-import io from 'socket.io-client'
 import Scanner from './components/Scanner'
 import { useSelector, useDispatch } from 'react-redux'
-import { addProduct, changeProduct } from './actions/products.action';
+import { addProduct, populateProductWithData } from './actions/products.action';
+
 import { Input, Button } from 'antd';
 
 
@@ -14,49 +14,61 @@ import {
   Switch,
   Route,
   Link,
+  useLocation
 } from "react-router-dom";
 
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-
 import Barcodes from './views/Barcodes'
-import fetchBarcode from './components/Scanner/Utils/maxiproductfetcher';
+import { fetchMaxiProduct } from './Utils/fetchApi';
+import { PRODUCT_REQUESTED } from './constants';
+
+
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const socket = io("https://develottment.com", { path: "/stream"})
 
 
-class SiderDemo extends React.Component {
-  state = {
+
+
+const SiderDemo = () => {
+  const [state, setState] = useState({
     collapsed: true,
-    room: "scanner"
+    room: "scanner",
+    selectedKey: "/"
+  })
+
+  const location = useLocation()
+
+  useEffect(() => {
+    console.log(location)
+    setState(prev => ({...prev, selectedKey: location.pathname}))
+  }, [location.pathname])
+
+
+  const onCollapse = collapsed => {
+    setState(prev => ({ ...prev, collapsed }));
   };
 
-  onCollapse = collapsed => {
-    this.setState({ collapsed });
-  };
-
-  render() {
     return (
 
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
+        <Sider collapsed={state.collapsed} onCollapse={onCollapse}>
           <div className="logo" />
-          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1">
+          <Menu theme="dark" defaultSelectedKeys={[state.selectedKey]} selectedKeys={[state.selectedKey]} mode="inline">
+            <Menu.Item key="/">
               <Link to="/">
                 <Icon type="api" />
                 <span>Rooms</span>
               </Link>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="/barcodes">
               <Link to="/barcodes">
                 <Icon type="barcode" />
                 <span>Barcodes</span>
               </Link>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="/scanner">
               <Link to="/scanner">
                 <Icon type="scan" />
                 <span>Scanner</span>
@@ -71,10 +83,13 @@ class SiderDemo extends React.Component {
               <Switch>
                 <Route path="/barcodes" render={() => <Barcodes/>}/>
                 <Route path="/" render={() => <div>
-                <h4>Room: {this.state.room}</h4>
-                  <Input value={this.state.room} onChange={(e) => this.setState({room: e.target.value})}/>
-                  <Button onClick={() => socket.emit("/join", this.state.room)}>Join</Button>  
-                </div>}/>
+                <h4>Room: {state.room}</h4>
+                  <Input value={state.room} onChange={(e) => setState({room: e.target.value})}/>
+                  <Button 
+                    // onClick={/* () => socket.emit("/join", this.state.room) */}
+                  >Join</Button>  
+                </div>
+              }/>
 
 
               </Switch>
@@ -86,7 +101,6 @@ class SiderDemo extends React.Component {
 
 
     );
-  }
 }
 
 
@@ -94,19 +108,12 @@ function App() {
 	const dispatch = useDispatch()
 
   useEffect(() => {
-    socket.on("connect", msg => console.log("Connected -> " , socket.id))
 
-		socket.on("/recieve/barcode", barcode => {
-			dispatch(addProduct({code: barcode}))
-			fetchBarcode(barcode)
-				.then(product => product.json())
-				.then(product => void product && dispatch(changeProduct(product)))
-		})
   },[])
   
   return (
     <div>
-      <Route path="/scanner" render={() => <Scanner socket={socket}/>}/>
+      <Route path="/scanner" render={() => <Scanner />}/>
       <Route path="/" render={() => <SiderDemo />}/>
     </div>
   );

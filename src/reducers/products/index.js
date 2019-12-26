@@ -1,11 +1,12 @@
-import { PRODUCT_ADD, PRODUCT_CHANGE } from '../../constants'
+import { PRODUCT_ADD, PRODUCT_UPDATE } from '../../constants'
 
 
-function productsReducer(state=[], action) {
+function products(state=[], action) {
+
 	switch(action.type) {
 		case PRODUCT_ADD: 
 			return [...state, action.payload]
-		case PRODUCT_CHANGE:
+		case PRODUCT_UPDATE:
 			return state.map(scanresult => {
 				if(scanresult.code === action.payload.productid) {
 					scanresult.product = action.payload
@@ -19,4 +20,4 @@ function productsReducer(state=[], action) {
 }
 
 
-export default productsReducer
+export default products

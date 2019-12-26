@@ -1,4 +1,4 @@
-import { PRODUCT_ADD, PRODUCT_CHANGE } from '../constants'
+import { PRODUCT_ADD, PRODUCT_UPDATE } from '../constants'
 
 export function addProduct(codeResult) {
 	return {
@@ -8,9 +8,9 @@ export function addProduct(codeResult) {
 }
 
 
-export function changeProduct(product) {
+export function populateProductWithData(data) {
 	return {
-		type: PRODUCT_CHANGE,
-		payload: product
+		type: PRODUCT_UPDATE,
+		payload: data
 	}
 }

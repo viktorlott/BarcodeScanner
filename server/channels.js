@@ -30,8 +30,7 @@ module.exports = () => app => {
 
 
 		socket.on("/post/barcode", (room, barcode) => {
-			console.log("Barcode -> ", barcode)
-			socket.broadcast.emit("/recieve/barcode", barcode)
+			// socket.broadcast.emit("/recieve/barcode", barcode)
 
 			socket.broadcast.to(room).emit("/recieve/barcode", barcode)
 		})
