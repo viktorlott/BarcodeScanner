@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import { Button, Radio, Icon } from 'antd';
+// import { Button, Radio, Icon } from 'antd';
 
 import { Link, NavLink } from 'react-router-dom'
 
@@ -48,12 +48,12 @@ export const ScannerWrapper = styled.div`
 
 export const TopBlock = styled.div`
   width: 100%;
-  height: 100px;
+  height: 15%;
 
 `
 export const CenterBlock = styled(TopBlock)`
   display: flex;
-  height: 200px;
+  height: 70%;
 
 `
 export const CenterRight = styled.div`
@@ -88,7 +88,7 @@ export const Darker = styled.div`
 
 
 export const BottomBlock = styled(TopBlock)`
-  height: calc(100% - 200px - 100px);
+  height: calc(15%);
   width: 100%;
   overflow: hidden;
 `
@@ -96,7 +96,7 @@ export const BottomBlock = styled(TopBlock)`
 export const Gradient = styled.div`
 
   width: 100%;
-  height: calc(100% - 100px - 200px);
+  height: calc(100% - 70%);
   position: absolute;
   bottom: 0;
   background: linear-gradient(
@@ -117,7 +117,7 @@ export const FieldView = styled.div`
   position: relative;
   z-index: 10;  
   width: 100%;
-  height: 200px;
+  height: 100%;
   transition: border 0.2s;
   box-sizing: border-box;
   display: flex;
@@ -135,8 +135,8 @@ export const TopLeft = styled.div`
   top: 0;
   left: 0;
   background: none;
-  border-top: 3px solid ${props => props.match ? "#00FF00" : "white"};
-  border-left: 3px solid ${props => props.match ? "#00FF00" : "white"};
+  border-top: 1px solid ${props => props.match ? "#00FF00" : "white"};
+  border-left: 1px solid ${props => props.match ? "#00FF00" : "white"};
 `
 export const TopRight = styled.div`
   height: 30%;
@@ -145,8 +145,8 @@ export const TopRight = styled.div`
   top: 0;
   right: 0;
   background: none;
-  border-top: 3px solid ${props => props.match ? "#00FF00" : "white"};
-  border-right: 3px solid ${props => props.match ? "#00FF00" : "white"};
+  border-top: 1px solid ${props => props.match ? "#00FF00" : "white"};
+  border-right: 1px solid ${props => props.match ? "#00FF00" : "white"};
 
 `
 export const BottomLeft = styled.div`
@@ -156,8 +156,8 @@ export const BottomLeft = styled.div`
   bottom: 0;
   background: none;
   left: 0;
-  border-bottom: 3px solid ${props => props.match ? "#00FF00" : "white"};
-  border-left: 3px solid ${props => props.match ? "#00FF00" : "white"};
+  border-bottom: 1px solid ${props => props.match ? "#00FF00" : "white"};
+  border-left: 1px solid ${props => props.match ? "#00FF00" : "white"};
 
 `
 export const BottomRight = styled.div`
@@ -167,12 +167,13 @@ export const BottomRight = styled.div`
   bottom: 0;
   right: 0;
   background: none;
-  border-bottom: 3px solid ${props => props.match ? "#00FF00" : "white"};
-  border-right: 3px solid ${props => props.match ? "#00FF00" : "white"};
+  border-bottom: 1px solid ${props => props.match ? "#00FF00" : "white"};
+  border-right: 1px solid ${props => props.match ? "#00FF00" : "white"};
 
 `
 export const MatchFound = styled.div`
   color: #7CFC00;
+
   transition: opacity 0.2s ease-in, visibility 0.2s ease-in;
   opacity: ${props => props.isMatch ? 1 : 0};
   visibility: ${props => props.isMatch ? "visible" : "hidden"};
@@ -180,13 +181,14 @@ export const MatchFound = styled.div`
   >h3 {
     text-align: center;
     margin: 5px;
-
+	color: #7CFC00;
     text-transform: capitalize;
   }
 `
 
 export const Barcode = styled.svg`
-
+	overflow: hidden;
+	border-radius: 4px;
 `
 
 export const List = styled.div`
@@ -230,24 +232,63 @@ export const ButtonDiv = styled(NavLink)`
   text-transform: capitalize;
   font-size: 16;
   border-radius: 1;
-  border: 1px solid #ff4d4f;
+  border-bottom: 3px solid #b71313!important;
   box-shadow: 0 2px 0 rgba(0,0,0,0.045);
   cursor: pointer;
   position: absolute;
   top: 0;
   font-weight: 800;
   padding: 10px;
-  color: white;
-  border-bottom-left-radius: 2px;
+  color: #222;
+  border-bottom-left-radius: 10px;
   transition: color 0.2s, background-color 0.2s, border 0.2s;
 
   &:hover {
 	  background-color: #ff7875;
-	  border: 1px solid #ff7875;
-	  color: white;
-
-
+	  color: #222;
   }
+`
+
+export const ButtonNav = styled(NavLink)`
+	display: block;
+	white-space: nowrap;
+	outline: none;
+	background: ${props => props.bg ? props.bg : "#fac742"};
+    padding: 5px;
+    text-align: center;
+    border-radius: 2px;
+    color: #222;
+    text-transform: uppercase;
+    line-height: normal;
+    cursor: pointer;
+	border-bottom: 3px solid ${props => props.bc ? props.bc : "#d29300"};
+	/* vertical-align: bottom; */
+	margin: 15px 0;
+
+	&:hover {
+	  color: #222;
+  	}
+`
+
+export const Button = styled.div`
+	display: block;
+	white-space: nowrap;
+	outline: none;
+	background: ${props => props.bg ? props.bg : "#fac742"};
+    padding: 5px;
+    text-align: center;
+    border-radius: 2px;
+    color: #222;
+    text-transform: uppercase;
+    line-height: normal;
+    cursor: pointer;
+	border-bottom: 3px solid ${props => props.bc ? props.bc : "#d29300"};
+	/* vertical-align: bottom; */
+	margin: 15px 0;
+
+	&:hover {
+	  color: #222;
+  	}
 `
 
 export const Spinner = () => (

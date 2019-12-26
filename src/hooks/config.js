@@ -10,10 +10,10 @@ export default state => ({
 		// deviceId: "7832475934759384534"
 	  },
 	  area: { // defines rectangle of the detection/localization area
-		top: "0%",    // top offset
-		right: "0%",  // right offset
-		left: "0%",   // left offset
-		bottom: "30%"  // bottom offset
+		top: "10%",    // top offset
+		right: "10%",  // right offset
+		left: "10%",   // left offset
+		bottom: "10%"  // bottom offset
 	  },
 	  singleChannel: false // true: only the red color-channel is read
 	},

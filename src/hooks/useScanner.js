@@ -56,7 +56,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 
 	const detected = useCallback(data => {
 		if(isDisabled.current) return
-		if (codes.current[data.codeResult.code] >= 5) {
+		if (codes.current[data.codeResult.code] >= 3) {
 			let drawingCtx = Quagga.canvas.ctx.overlay,
 			drawingCanvas = Quagga.canvas.dom.overlay;
 			drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));

@@ -24,6 +24,8 @@ import {
 	List,
 	ButtonDiv,
 	Spinner,
+	ButtonNav,
+	Button
 } from './styles'
 import { Icon } from 'antd'
 import { Link, useHistory } from 'react-router-dom'
@@ -34,8 +36,8 @@ import { Link, useHistory } from 'react-router-dom'
 
 const jsBarcodeConfig = state => ({
 	format: state.match.format.replace("_", "").toUpperCase(),
-	lineColor: "#ffffff",
-	background: "#000000",
+	lineColor: "#000000",
+	background: "#ffffff",
 	width: 2,
 	height: 40,
 	displayValue: true
@@ -74,7 +76,9 @@ function Scanner() {
                     <TopRight className="border" match={state.match}/>
                     <MatchFound isMatch={state.match}>
                       <h3>Match hittad!</h3>
-                      <div onClick={e => ctl.start()}><Barcode  ref={barcodeRef} /></div>
+                      	<div onClick={e => ctl.start()}><Barcode  ref={barcodeRef} /></div>
+						<ButtonNav bc={"#025190"|| "#3f535d"} bg={"#017ad4" || "#607d8b"} to="/barcodes">List</ButtonNav>
+						<Button onClick={e => ctl.start()}>Back</Button>
                     </MatchFound>
                     <BottomRight className="border" match={state.match}/>
                     <BottomLeft className="border" match={state.match}/>
@@ -84,7 +88,7 @@ function Scanner() {
           </CenterBlock>
           <BottomBlock>
             <Darker flexStart={true}>	
-                <List>
+                {/* <List>
                   <ul>
                     <li style={{marginBottom: 5}}><h4>Barkoder</h4></li>
                     {ctl.list.map((result, i) => {
@@ -94,7 +98,7 @@ function Scanner() {
                       return <li key={i}><Spinner/>{result.code}</li>
                     })}
                   </ul>
-                </List>
+                </List> */}
             </Darker>
             <Gradient/>
           </BottomBlock>
