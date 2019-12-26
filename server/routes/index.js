@@ -1,7 +1,7 @@
-const root = require("./root")
-const express = require("express")
+const createRootRouter = require("./root")
+
 
 
 module.exports = (app) => {
-	app.use(root)
+	createRootRouter(app)
 }
