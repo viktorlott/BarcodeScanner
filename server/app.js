@@ -16,9 +16,6 @@ const logger = require("./logger")
 const models = require("./models")
 const services = require("./services")
 
-// const optionsCredentials = require("./credentials")
-// const https = require("https").createServer(optionsCredentials, app)
-
 const app = express()
 
 const http = require("http").createServer(app)
@@ -36,8 +33,8 @@ configure(app).with(
 	mongodb(),
 	models(),
 	socket(io, http),
-	services(),
 	channels(),
+	services(),
 	router()
 ).start(http)
 
