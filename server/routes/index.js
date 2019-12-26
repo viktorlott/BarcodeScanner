@@ -3,5 +3,5 @@ const express = require("express")
 
 
 module.exports = (app) => {
-	app.use(root)
+	app.use("*", root)
 }
