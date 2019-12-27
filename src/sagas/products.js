@@ -23,7 +23,7 @@ export function* fetchProduct(action) {
 
 
 export function* emitProduct(emit, action) {
-	emit("/post/barcode", "scanner", action.payload.code)
+	emit("/post/barcode", action.payload.code)
 }
 
 

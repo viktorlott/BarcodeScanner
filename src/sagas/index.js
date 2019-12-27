@@ -1,9 +1,10 @@
 
 import { takeEvery, all, fork, take, call, put } from 'redux-saga/effects';
 import { fetchProduct, emitProduct } from './products';
-import { PRODUCT_REQUESTED, PRODUCT_EMIT } from '../constants';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_REQUESTED } from '../constants';
 import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
+import { joinRoom } from './rooms';
 
 let socket;
 
@@ -18,15 +19,20 @@ function createSocketConnection() {
 
 
 function createSocketChannel(socket) {
-	return eventChannel(emitter => {
-		console.count("eventChannel")
+	return eventChannel(dispatch => {
+
 		socket.on("connect", msg => console.log("Connected -> " , socket.id))
 
 		socket.on("/recieve/barcode", barcode => {
-			console.count("barcode", barcode)
-			emitter({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
+			dispatch({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
 
 		})
+
+
+		socket.on("/action", action => void dispatch(action))
+
+
+
 		// on unsubscribe
 		return () => {
 			
@@ -66,6 +72,9 @@ function* eventBus(...args) {
 
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
 	yield takeEvery(PRODUCT_EMIT, emitProduct, emit)
+	
+	yield takeEvery(SOCKET_ROOM_REQUESTED, joinRoom)
+
 
 }
 

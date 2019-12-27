@@ -38,8 +38,8 @@
     "winston": "^3.2.1"
   },
   "scripts": {
-    "secure": "HTTPS=true react-scripts start",
-    "start": "HTTPS=true react-scripts start",
+    "secure": "react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

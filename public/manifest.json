@@ -1,5 +1,5 @@
 {
-  "short_name": "Barcode Scanner",
+  "short_name": "Scanithub",
   "name": "Barcode Scanner",
   "icons": [
     {
@@ -8,18 +8,19 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+        "src": "/android-chrome-256x256.png",
+        "sizes": "256x256",
+        "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#ffffff",
-  "background_color": "#222"
+  "background_color": "#222",
+  "orientation": "portrait"
 }

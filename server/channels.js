@@ -1,17 +1,17 @@
 const { serverlog } = require("./utils")
 
 
-const announce = (io, room, msg) => () => {
-	io.to(room).emit("/notifications", msg)
+const announce = (io, room, action) => () => {
+	io.to(room).emit("/action", action)
 }
 
 const joinRoom = (io, socket) => room => {
 	socket.leave(application)
-	socket.join(room, announce(io, room, "A new device has joined"))
+	socket.join(room, announce(io, room, { type: "SOCKET_ROOM_JOINED", payload: room }))
 }
 
 const leaveRoom = (io, socket) => room => {
-	socket.leave(room, announce(io, room, "A device has left"))
+	socket.leave(room, announce(io, room, { type: "NOTIFICATION", payload: "A device has left" }))
 	socket.join(application)
 }
 
@@ -25,12 +25,14 @@ module.exports = () => app => {
 
 		socket.join(defaultRoom)
 
-		socket.on("/join", joinRoom(io, socket))
-		socket.on("/leave", leaveRoom(io, socket))
+		socket.on("/room/join", joinRoom(io, socket))
+		socket.on("/room/leave", leaveRoom(io, socket))
 
 
-		socket.on("/post/barcode", (room, barcode) => {
-			socket.broadcast.to(room).emit("/recieve/barcode", barcode)
+		socket.on("/post/barcode", (barcode) => {
+			const rooms = Object.values(socket.rooms)
+			rooms.forEach(room => void socket.broadcast.to(room).emit("/recieve/barcode", barcode))
+			
 		})
 	})
 
