@@ -1,6 +1,6 @@
 import { put, takeEvery, all, call } from 'redux-saga/effects'
 import { PRODUCT_REQUESTED } from '../constants';
-import { fetchMaxiProduct } from '../Utils/fetchApi';
+import { fetchMaxiProduct } from '../utils/fetchApi';
 import { addProduct, populateProductWithData } from '../actions/products.action';
 
 

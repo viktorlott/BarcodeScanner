@@ -19,7 +19,7 @@ import {
 
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import Barcodes from './views/Barcodes'
-import { fetchMaxiProduct } from './Utils/fetchApi';
+import { fetchMaxiProduct } from './utils/fetchApi';
 import { PRODUCT_REQUESTED } from './constants';
 
 
