@@ -8,7 +8,7 @@ function products(state=[], action) {
 			return [...state, action.payload]
 		case PRODUCT_UPDATE:
 			return state.map(scanresult => {
-				if(scanresult.code === action.payload.productid) {
+				if( action.payload.productid && scanresult.code === action.payload.productid) {
 					scanresult.product = action.payload
 				}
 				return scanresult

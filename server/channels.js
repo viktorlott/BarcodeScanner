@@ -39,6 +39,7 @@ const createRoom = (io, socket, app) => async room => {
 
 const joinRoom = (io, socket, app) => async room => {
 	const roomModel = app.get("roommodel")()
+	const barcodeModel = app.get("barcodemodel")()
 	const answer = await roomModel.find({name: room})
 	const { status, error, result } = answer
 	
@@ -52,11 +53,14 @@ const joinRoom = (io, socket, app) => async room => {
 
 	const to = me ? me : socket.id
 
+	const barcodes = await barcodeModel.findCodesForOwner({ownername: room})
+
 	socket.join(
 		room, 
 		() => {
-			emit(io, to, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room,  } })()
 			listRoomMembers(io, socket)(room)
+			emit(io, to, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room,  } })()
+			barcodes.forEach(barcode => void emit(io, to, { type: "PRODUCT_ADD", payload: barcode })())
 			socket.barcode_room = room
 		}
 	)
@@ -89,6 +93,9 @@ module.exports = () => app => {
 		socket.on("/room/create", createRoomHandle)
 		socket.on("/room/join", joinRoomHandle)
 		socket.on("/room/leave", leaveRoomHandle)
+
+
+
 
 
 		socket.on("/post/barcode", (barcode) => {

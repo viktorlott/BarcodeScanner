@@ -20,48 +20,20 @@ class BarcodeModel {
 			const error = new Error("Insert failed, object already exists")
 			return { status: "error", error }
 		}
-
 		return { status: "success", result: insertResult }
+	}
+
+	async findCodesForOwner({ownername}) {
+		let findResult = null
+		const error = new Error("Barcodes not found")
+		try {
+			findResult = await this.collection.find({ "owner.query.name": ownername }).toArray()
+		} catch(dberror) {
+			return Promise.resolve({ status: "error", error })
+		}
+		return Promise.resolve(findResult)
 
 	}
 }
 
 module.exports = app => token => new BarcodeModel(app, token)
-
-
-
-
-// module.exports = app => {
-// 	const mongooseClient = app.get("mongooseClient")
-
-// 	const { Schema } = mongooseClient
-
-// 	const products = new Schema({
-// 		brand: String,
-// 		cartitem: {
-// 			commId: String,
-// 			id: String,
-// 			listPrice: String,
-// 			meanWeight: String,
-// 			prodId: String,
-// 			qty: String,
-// 			skuld: String,
-// 			unit: String,
-// 			unitOfMeasure: String
-// 		},
-// 		category: String,
-// 		img: String,
-// 		price: String,
-// 		productId: String,
-// 		tags: [String],
-// 		tester: String,
-// 		title: String,
-// 		updatedQty: String,
-// 		variant: String
-// 	}, { timestamps: true })
-
-
-// 	app.set("productSchema", products)
-
-// 	return mongooseClient.model("products", products)
-// }
