@@ -28,4 +28,5 @@ function Root() {
 
 ReactDOM.render(<Root/>, document.getElementById('root'));
 
-serviceWorker.unregister();
+// serviceWorker.unregister();
+serviceWorker.register()
