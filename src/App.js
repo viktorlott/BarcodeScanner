@@ -20,7 +20,7 @@ import {
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import Barcodes from './views/Barcodes'
 import { fetchMaxiProduct } from './utils/fetchApi';
-import { PRODUCT_REQUESTED } from './constants';
+import { PRODUCT_REQUESTED, SOCKET_ROOM_CREATE_REQUESTED } from './constants';
 
 
 
@@ -37,6 +37,7 @@ const SiderDemo = () => {
     room: "scanner",
     selectedKey: "/"
   })
+	const dispatch = useDispatch()
 
   const location = useLocation()
 
@@ -86,8 +87,7 @@ const SiderDemo = () => {
                 <h4>Room: {state.room}</h4>
                   <Input value={state.room} onChange={(e) => setState({room: e.target.value})}/>
                   <Button 
-                    // onClick={/* () => socket.emit("/join", this.state.room) */}
-                  >Join</Button>  
+                    onClick={() => dispatch({type: SOCKET_ROOM_CREATE_REQUESTED, payload: {roomname: state.room}})}>Join</Button>  
                 </div>
               }/>
 
@@ -105,7 +105,6 @@ const SiderDemo = () => {
 
 
 function App() {
-	const dispatch = useDispatch()
 
   useEffect(() => {
 

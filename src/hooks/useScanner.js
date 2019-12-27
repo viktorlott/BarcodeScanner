@@ -25,6 +25,12 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 	const dispatch = useDispatch()
 
 
+	const test2 = useSelector(state => state.rooms)
+
+	console.log(test2)
+
+
+
 	useEffect(() => {
 		isDisabled.current = false
 

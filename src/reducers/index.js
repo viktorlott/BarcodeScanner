@@ -1,8 +1,10 @@
 import products from './products'
+import rooms from './rooms'
 import { combineReducers } from 'redux'
 
 const reducers = combineReducers({
-	products
+	products,
+	rooms
 })
 
 

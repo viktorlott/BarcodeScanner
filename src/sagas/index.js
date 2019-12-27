@@ -1,10 +1,10 @@
 
 import { takeEvery, all, fork, take, call, put } from 'redux-saga/effects';
 import { fetchProduct, emitProduct } from './products';
-import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_REQUESTED } from '../constants';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT } from '../constants';
 import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
-import { joinRoom } from './rooms';
+import { joinRoom, createRoom, leaveRoom } from './rooms';
 
 let socket;
 
@@ -73,7 +73,15 @@ function* eventBus(...args) {
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
 	yield takeEvery(PRODUCT_EMIT, emitProduct, emit)
 	
-	yield takeEvery(SOCKET_ROOM_REQUESTED, joinRoom)
+	yield takeEvery(SOCKET_ROOM_JOIN_REQUESTED, joinRoom, emit)
+	yield takeEvery(SOCKET_ROOM_LEAVE_REQUESTED, leaveRoom, emit)
+	yield takeEvery(SOCKET_ROOM_CREATE_REQUESTED, createRoom, emit)
+
+	// yield takeEvery(SOCKET_ROOM_CREATED, createRoom)
+	// yield takeEvery(SOCKET_ROOM_JOINED, createRoom)
+	// yield takeEvery(SOCKET_ROOM_LEFT, createRoom)
+
+
 
 
 }
