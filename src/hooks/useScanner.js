@@ -46,6 +46,8 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 		}
 
 		Quagga.init(config({ target: scanner.current }), cb);
+
+		return () => void Quagga.stop()
 	}, [])
 
 

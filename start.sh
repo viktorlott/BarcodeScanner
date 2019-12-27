@@ -8,4 +8,4 @@ pm2 delete scanner
 
 pm2 start ./server/index.js --name scanner
 
-echo "Done!"
+echo -e "Done!"
