@@ -8,7 +8,6 @@ import { Provider } from 'react-redux'
 import './App.css';
 import 'antd/dist/antd.css';
 
-
 import {
 	BrowserRouter as Router,
 	Switch,
@@ -26,7 +25,18 @@ function Root() {
 	)
 }
 
+
+
+
 ReactDOM.render(<Root/>, document.getElementById('root'));
 
 // serviceWorker.unregister();
 serviceWorker.register()
+
+// Disable zoom in iOS safari
+document.addEventListener('touchmove', function(event) {
+	event = event.originalEvent || event;
+	if (event.scale !== 1) {
+	   event.preventDefault();
+	}
+}, false);
