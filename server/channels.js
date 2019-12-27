@@ -1,32 +1,77 @@
 const { serverlog } = require("./utils")
+const get = require("lodash/get")
 
 
-const announce = (io, room, action) => () => {
-	io.to(room).emit("/action", action)
+const emit = (io, target, action) => () => {
+	io.to(target).emit("/action", action)
 }
+
+const listRoomMembers = (io, socket) => room => {
+	const members = get(io, ["sockets", "adapter", "rooms", room, "sockets"], {})
+	emit(io, room, { type: "SOCKET_ROOM_MEMBER_LIST", payload: { members } })()
+}
+
 const createRoom = (io, socket, app) => async room => {
-	console.log("got here", room)
 	const roomModel = app.get("roommodel")()
-	const { status, error, result } = await roomModel.create({name: room})
-	if(error) return void io.emit("/action", { type: "SOCKET_ROOM_CREATED_ERROR", payload: error })
+	const answer = await roomModel.create({name: room})
+	const { status, error, result } = answer
+	const [me, prevRoom] = Object.keys(socket.rooms)
 
-	const [prevRoom] = Object.values(socket.rooms)
-	socket.leave(prevRoom)
-	socket.join(room, announce(io, room, { type: "SOCKET_ROOM_CREATED", payload: { roomname: room, result} }))
+	if(status === "error") return void io.to(me).emit("/action", { type: "SOCKET_ROOM_CREATED_ERROR", payload: { message: error.message } })
+
+	if(room !== prevRoom) {
+		socket.leave(prevRoom)
+		listRoomMembers(io, socket)(prevRoom)
+	}
+
+	const to = me ? me : socket.id
+
+	socket.join(
+		room, 
+		() => {
+			emit(io, to, { type: "SOCKET_ROOM_CREATED", payload: { roomname: room, result } })()
+			listRoomMembers(io, socket)(room)
+			socket.barcode_room = room
+		}
+	)
+
 }
 
-const joinRoom = (io, socket) => room => {
+const joinRoom = (io, socket, app) => async room => {
+	const roomModel = app.get("roommodel")()
+	const answer = await roomModel.find({name: room})
+	const { status, error, result } = answer
 	
-	const [prevRoom] = Object.values(socket.rooms)
-	socket.leave(prevRoom)
+	const [me, prevRoom] = Object.keys(socket.rooms)
+	if(status === "error") return void io.to(me).emit("/action", { type: "SOCKET_ROOM_JOINED_ERROR", payload: { message: error.message } })
+
+	if(room !== prevRoom) {
+		socket.leave(prevRoom)
+		listRoomMembers(io, socket)(prevRoom)
+	}
+
+	const to = me ? me : socket.id
+
+	socket.join(
+		room, 
+		() => {
+			emit(io, to, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room,  } })()
+			listRoomMembers(io, socket)(room)
+			socket.barcode_room = room
+		}
+	)
+
 	
-	socket.join(room, announce(io, room, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room } }))
+
 }
 
 const leaveRoom = (io, socket) => room => {
-	socket.leave(room, announce(io, room, { type: "SOCKET_ROOM_LEFT", payload: { roomname: room } }))
-	socket.join(application)
+	const [me, _] = Object.values(socket.rooms)
+	socket.leave(room, emit(io, socket.id, { type: "SOCKET_ROOM_LEFT", payload: { roomname: room } }))
+	socket.join("scanner")
 }
+
+
 
 
 module.exports = () => app => {
@@ -35,25 +80,32 @@ module.exports = () => app => {
 	io.on("connection", socket => {
 		const { defaultRoom="scanner" } = socket.handshake.query
 
+		const joinRoomHandle = joinRoom(io, socket, app)
+		const createRoomHandle = createRoom(io, socket, app)
+		const leaveRoomHandle = leaveRoom(io, socket, app)
 
-		socket.join(defaultRoom)
+		joinRoomHandle(defaultRoom)
 
-		socket.on("/room/create", createRoom(io, socket, app))
-		socket.on("/room/join", joinRoom(io, socket))
-		socket.on("/room/leave", leaveRoom(io, socket))
+		socket.on("/room/create", createRoomHandle)
+		socket.on("/room/join", joinRoomHandle)
+		socket.on("/room/leave", leaveRoomHandle)
 
 
 		socket.on("/post/barcode", (barcode) => {
-			const rooms = Object.values(socket.rooms)
+			const [_, room] = Object.keys(socket.rooms)
 			const barcodeModel = app.get("barcodemodel")()
-			barcodeModel.create({ code: barcode, ownername: rooms[0] ? rooms[0] : "scanner" })
-			rooms.forEach(room => void socket.broadcast.to(room).emit("/recieve/barcode", barcode))
+
+			barcodeModel.create({ code: barcode, ownername: room ? room : "scanner" })
+			socket.broadcast.to(room).emit("/recieve/barcode", barcode)
+		})
+
+
+		socket.on("disconnect", () => {
+			listRoomMembers(io, socket)(socket.barcode_room)
 		})
 	})
 
-	io.on("disconnect", socket => {
-		console.log("Socket disconnected")
-	})
+
 
 	serverlog("channels")
 }

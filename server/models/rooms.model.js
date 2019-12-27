@@ -13,14 +13,29 @@ class RoomModel {
 			console.log("RoomModel Index Error")
 		}
 
-		const insertResult = await this.collection.insertOne({ name, created: new Date()})
-
-		if(insertResult instanceof Error) {
-			const error = new Error("Insert failed, room already exists -> " + name)
+		let insertResult = null
+		try {
+			insertResult = await this.collection.insertOne({ name, created: new Date()})
+		} catch(dberror) {
+			const error = new Error("Room already exists")
 			return { status: "error", error }
 		}
 
 		return { status: "success", result: insertResult }
+
+	}
+
+
+	async find({name}) {
+		let findResult = null
+		try {
+			findResult = await this.collection.findOne({ name })
+		} catch(dberror) {
+			const error = new Error("Room not found")
+			return Promise.resolve({ status: "error", error })
+		}
+		const error = new Error("Room not found")
+		return Promise.resolve(findResult ? { status: "success", result: findResult } : { status: "error", error })
 
 	}
 }

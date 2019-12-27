@@ -8,14 +8,15 @@ class BarcodeModel {
 
 
 	async create({code, ownername}) {
-		const indexResult = await this.collection.createIndex({ "owner.query.$**": 1, "owner.type": 1 })
+		const indexResult = await this.collection.createIndex({ "owner.query.name": 1, "owner.type": 1 })
 		if(indexResult instanceof Error) {
 			console.log("RoomModel Index Error")
 		}
 
-		const insertResult = await this.collection.insertOne({ code, owner: { type: "pointer", query: { name: ownername }},created: new Date()})
-
-		if(insertResult instanceof Error) {
+		let insertResult = null
+		try {
+			insertResult = await this.collection.insertOne({ code, owner: { type: "pointer", query: { name: ownername }},created: new Date()})
+		} catch(dberror) {
 			const error = new Error("Insert failed, object already exists")
 			return { status: "error", error }
 		}

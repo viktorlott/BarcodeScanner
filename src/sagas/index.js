@@ -72,7 +72,7 @@ function* eventBus(...args) {
 
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
 	yield takeEvery(PRODUCT_EMIT, emitProduct, emit)
-	
+
 	yield takeEvery(SOCKET_ROOM_JOIN_REQUESTED, joinRoom, emit)
 	yield takeEvery(SOCKET_ROOM_LEAVE_REQUESTED, leaveRoom, emit)
 	yield takeEvery(SOCKET_ROOM_CREATE_REQUESTED, createRoom, emit)
