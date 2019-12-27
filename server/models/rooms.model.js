@@ -8,7 +8,7 @@ class RoomModel {
 
 
 	async create({name}) {
-		const indexResult = await this.collection.createIndex({ name: 1}, { unique: true })
+		const indexResult = await this.collection.createIndex({ name: 1 }, { unique: true })
 		if(indexResult instanceof Error) {
 			console.log("RoomModel Index Error")
 		}

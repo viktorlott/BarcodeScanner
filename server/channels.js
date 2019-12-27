@@ -59,8 +59,8 @@ const joinRoom = (io, socket, app) => async room => {
 		room, 
 		() => {
 			listRoomMembers(io, socket)(room)
-			emit(io, to, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room,  } })()
-			barcodes.forEach(barcode => void emit(io, to, { type: "PRODUCT_ADD", payload: barcode })())
+			emit(io, to, { type: "SOCKET_ROOM_JOINED", payload: { roomname: room }})()
+			emit(io, to, { type: "PRODUCT_REPLACE_ALL", payload: barcodes })() 
 			socket.barcode_room = room
 		}
 	)
