@@ -1,3 +1,45 @@
+/**
+ * BUILDING BLOCKS
+ */
+
+const REQUESTED = "REQUESTED"
+
+const REQUEST = "REQUEST"
+const SUCCESS = "SUCCESS"
+const FAILED = "FAILED"
+const ERROR = "ERROR"
+
+const CREATE = "CREATE"
+const READ   = "READ"
+const UPDATE = "UPDATE"
+const DELETE = "DELETE"
+
+const FIND   = "FIND"
+const ADD    = "ADD"
+const EMIT   = "EMIT"
+
+const JOIN   = "JOIN"
+const LEAVE  = "LEAVE"
+
+const CREATED = "CREATED"
+const JOINED = "JOINED"
+const LEFT = "LEFT"
+
+const CLIENT = "CLIENT"
+const SOCKET = "SOCKET"
+const REST = "REST"
+
+const ROOM = "ROOM"
+const PRODUCT = "PRODUCT"
+const BARCODE = "BARCODE"
+const LIST = "LIST"
+const MEMBER = "MEMBER"
+
+
+/**
+ * ACTION TYPES
+ */
+
 export const PRODUCT_ADD = "PRODUCT_ADD"
 export const PRODUCT_REPLACE_ALL = "PRODUCT_REPLACE_ALL"
 export const PRODUCT_UPDATE = "PRODUCT_UPDATE"

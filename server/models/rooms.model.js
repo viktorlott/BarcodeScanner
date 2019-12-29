@@ -1,9 +1,26 @@
+const addTriggers = require("../hooks/trigger")
+
 const ROOMS = "rooms"
 
+const events = {
+	before: {
+		insert: [],
+	},
+	after: {
+		findOne: [],
+
+		insert: [],	
+	},
+	error: {
+		insert: [],	
+	}
+}
 class RoomModel {
 	constructor(app, token) {
 		const db = app.get("db")
 		this.collection = db.collection(ROOMS)
+
+		addTriggers(this.collection, events)
 	}
 
 

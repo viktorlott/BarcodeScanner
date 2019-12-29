@@ -1,9 +1,11 @@
 const BARCODES = "barcodes"
 
+
 class BarcodeModel {
 	constructor(app, token) {
 		const db = app.get("db")
 		this.collection = db.collection(BARCODES)
+
 	}
 
 

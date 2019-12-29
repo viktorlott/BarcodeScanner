@@ -2,7 +2,6 @@ import { SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, SOCKET_ROOM_
 
 
 function rooms(state={roomname: "scanner", result: null, members: {}}, action) {
-	console.log(action)
 	switch(action.type) {
 		case SOCKET_ROOM_CREATED_ERROR: 
 			return { ...state, error: action.payload, members: state.members }
