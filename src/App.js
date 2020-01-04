@@ -99,6 +99,23 @@ const SiderDemo = () => {
                   <Button 
                     onClick={() => dispatch({type: SOCKET_ROOM_JOIN_REQUESTED, payload: {roomname: state.room}})}>Join</Button>  
                   {rooms.error && <div>{rooms.error.message}</div>}
+
+                  <div>
+                  <Button
+                    onClick={() => {
+                      /*global chrome*/
+                      chrome.tabs.query({active: true, currentWindow:true},
+                        function(tabs) {
+                          var activeTab = tabs[0];
+                          /*global chrome*/
+                          chrome.tabs.sendMessage(activeTab.id, 
+                            {"message": "clicked_browser_action"}
+                          );
+                      });
+                    }}>
+                    Chrome Tab
+                  </Button>
+                  </div>
                 </div>
               }/>
               </Switch>
@@ -112,6 +129,7 @@ const SiderDemo = () => {
 
 
 function App() {
+
 
   useEffect(() => {
 

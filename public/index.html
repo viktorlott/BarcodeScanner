@@ -9,12 +9,23 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- <link rel="manifest" href="%PUBLIC_URL%/manifest.web.json" /> -->
     
     <title>Scanithub</title>
+
+    <style>
+		
+      html, body {
+        width: 700px!important;
+        height: 500px!important;
+        overflow: scroll!important;
+        position: static!important;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root" style="width: 700px;"></div>
     
   </body>
 </html>

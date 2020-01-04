@@ -27,7 +27,7 @@ function Root() {
 
 
 
-
+/*global chrome*/
 ReactDOM.render(<Root/>, document.getElementById('root'));
 
 // serviceWorker.unregister();
