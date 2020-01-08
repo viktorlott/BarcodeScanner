@@ -30,8 +30,8 @@ function Root() {
 /*global chrome*/
 ReactDOM.render(<Root/>, document.getElementById('root'));
 
-// serviceWorker.unregister();
-serviceWorker.register()
+serviceWorker.unregister();
+// serviceWorker.register()
 
 // Disable zoom in iOS safari
 document.addEventListener('touchmove', function(event) {

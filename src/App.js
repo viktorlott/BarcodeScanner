@@ -20,7 +20,7 @@ import {
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import Barcodes from './views/Barcodes'
 import { fetchMaxiProduct } from './utils/fetchApi';
-import { PRODUCT_REQUESTED, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED } from './constants';
+import { PRODUCT_REQUESTED, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, EXTENSION_SEND_MESSAGE } from './constants';
 
 
 
@@ -102,18 +102,18 @@ const SiderDemo = () => {
 
                   <div>
                   <Button
-                    onClick={() => {
-                      /*global chrome*/
-                      chrome.tabs.query({active: true, currentWindow:true},
-                        function(tabs) {
-                          var activeTab = tabs[0];
-                          /*global chrome*/
-                          chrome.tabs.sendMessage(activeTab.id, 
-                            {"message": "clicked_browser_action"}
-                          );
-                      });
-                    }}>
-                    Chrome Tab
+                    onClick={() => { dispatch({type: EXTENSION_SEND_MESSAGE, payload: { type: "SELECT_INPUT_ELEMENT" }}) }}>
+                    Chrome input
+                  </Button>
+
+                  <Button
+                    onClick={() => { dispatch({type: EXTENSION_SEND_MESSAGE, payload: { type: "SELECT_BUTTON_ELEMENT" }}) }}>
+                    Chrome button
+                  </Button>
+
+                  <Button
+                    onClick={() => { dispatch({type: EXTENSION_SEND_MESSAGE, payload: { type: "SAVE_URL" }}) }}>
+                    Chrome save
                   </Button>
                   </div>
                 </div>

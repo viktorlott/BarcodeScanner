@@ -1,10 +1,11 @@
 
 import { takeEvery, all, fork, take, call, put } from 'redux-saga/effects';
 import { fetchProduct, emitProduct } from './products';
-import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT } from '../constants';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, EXTENSION_SEND_MESSAGE } from '../constants';
 import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
 import { joinRoom, createRoom, leaveRoom } from './rooms';
+import { toExtension } from './extension';
 
 let socket;
 
@@ -25,14 +26,11 @@ function createSocketChannel(socket) {
 
 		socket.on("/recieve/barcode", barcode => {
 			dispatch({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
-
+			dispatch({ type: EXTENSION_SEND_MESSAGE, payload: { type: "SEARCH_BARCODE", payload: barcode }})
 		})
 
-
 		socket.on("/action", action => void dispatch(action))
-
-
-
+		
 		// on unsubscribe
 		return () => {
 			
@@ -80,6 +78,9 @@ function* eventBus(...args) {
 	// yield takeEvery(SOCKET_ROOM_CREATED, createRoom)
 	// yield takeEvery(SOCKET_ROOM_JOINED, createRoom)
 	// yield takeEvery(SOCKET_ROOM_LEFT, createRoom)
+
+
+	yield takeEvery(EXTENSION_SEND_MESSAGE, toExtension)
 
 
 
