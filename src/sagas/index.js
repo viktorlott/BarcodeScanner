@@ -8,6 +8,20 @@ import { joinRoom, createRoom, leaveRoom } from './rooms';
 import { toExtension } from './extension';
 
 let socket;
+// const d = io(process.env.REACT_APP_SERVER_URL, { path: "/stream"})
+
+// d.on("/receive/barcode", barcode => {
+// 		/*global chrome*/
+// 		chrome.tabs.query({ active: true, currentWindow: true },
+// 			function (tabs) {
+// 				const activeTab = tabs[0];
+// 				/*global chrome*/
+// 				chrome.tabs.sendMessage(activeTab.id,
+// 					barcode
+// 			);
+// 		});
+// })
+
 
 function createSocketConnection() {
 		socket = io(process.env.REACT_APP_SERVER_URL, { path: "/stream"})
@@ -24,13 +38,13 @@ function createSocketChannel(socket) {
 
 		socket.on("connect", msg => console.log("Connected -> " , socket.id))
 
-		socket.on("/recieve/barcode", barcode => {
+		socket.on("/receive/barcode", barcode => {
 			dispatch({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
 			dispatch({ type: EXTENSION_SEND_MESSAGE, payload: { type: "SEARCH_BARCODE", payload: barcode }})
 		})
 
 		socket.on("/action", action => void dispatch(action))
-		
+
 		// on unsubscribe
 		return () => {
 			

@@ -1,0 +1,23 @@
+{
+  "name": "My Extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "content_scripts" : [
+      {
+        "matches": [ "<all_urls>" ],
+        "js": ["/static/js/index.js", "/extensions/content.js"]
+      }
+  ],
+  "background": {
+    "scripts": [
+      "/extensions/socket.io-client.js", 
+      "/extensions/background.js"
+    ]
+  },
+  "permissions": [
+    "tabs"
+  ]
+}

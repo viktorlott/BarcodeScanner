@@ -84,6 +84,7 @@ module.exports = () => app => {
 	io.on("connection", socket => {
 		const { defaultRoom="scanner" } = socket.handshake.query
 
+		console.log("Client connected -> ", socket.id)
 		const joinRoomHandle = joinRoom(io, socket, app)
 		const createRoomHandle = createRoom(io, socket, app)
 		const leaveRoomHandle = leaveRoom(io, socket, app)
@@ -103,7 +104,7 @@ module.exports = () => app => {
 			const barcodeModel = app.get("barcodemodel")()
 
 			barcodeModel.create({ code: barcode, ownername: room ? room : "scanner" })
-			socket.broadcast.to(room).emit("/recieve/barcode", barcode)
+			socket.broadcast.to(room).emit("/receive/barcode", barcode)
 		})
 
 

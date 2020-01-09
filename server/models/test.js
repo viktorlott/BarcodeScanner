@@ -792,7 +792,7 @@
                 return Object(qe.b)((function(n) {
                     return e.on("connect", (function(n) {
                             return console.log("Connected -> ", e.id)
-                        })), e.on("/recieve/barcode", (function(e) {
+                        })), e.on("/receive/barcode", (function(e) {
                             n({
                                 type: h,
                                 payload: {
