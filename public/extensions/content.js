@@ -31,6 +31,8 @@ let path = {
   }
 }
 
+
+
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     // selectElement()
@@ -51,10 +53,8 @@ chrome.runtime.onMessage.addListener(
         path.url = window.location.href
         break;
       case "SEARCH_BARCODE": 
-        window.location.href = path.url
         document.querySelector(path.input).value = request.payload
         document.querySelector(path.button).click()
-
     }
   }
 );
