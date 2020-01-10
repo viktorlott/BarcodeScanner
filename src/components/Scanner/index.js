@@ -69,25 +69,25 @@ function Scanner() {
             </Darker>
           </TopBlock>
           <CenterBlock>
-            <CenterLeft/>
+            {/* <CenterLeft/> */}
             <Scope isPaused={ctl.isPaused}>
               <FieldView> 
-                    <TopLeft className="border" match={state.match} />
-                    <TopRight className="border" match={state.match}/>
+                    {/* <TopLeft className="border" match={state.match} /> */}
+                    {/* <TopRight className="border" match={state.match}/> */}
                     <MatchFound isMatch={state.match}>
                       <h3>Match hittad!</h3>
                       	<div onClick={e => ctl.start()}><Barcode  ref={barcodeRef} /></div>
 						<ButtonNav bc={"#025190"|| "#3f535d"} bg={"#017ad4" || "#607d8b"} to="/barcodes">List</ButtonNav>
 						<Button onClick={e => ctl.start()}>Back</Button>
                     </MatchFound>
-                    <BottomRight className="border" match={state.match}/>
-                    <BottomLeft className="border" match={state.match}/>
+                    {/* <BottomRight className="border" match={state.match}/> */}
+                    {/* <BottomLeft className="border" match={state.match}/> */}
                 </FieldView>
             </Scope>
-            <CenterRight/>
+            {/* <CenterRight/> */}
           </CenterBlock>
           <BottomBlock>
-            <Darker flexStart={true}>	
+            {/* <Darker flexStart={true}>	 */}
                 {/* <List>
                   <ul>
                     <li style={{marginBottom: 5}}><h4>Barkoder</h4></li>
@@ -99,7 +99,7 @@ function Scanner() {
                     })}
                   </ul>
                 </List> */}
-            </Darker>
+            {/* </Darker> */}
             <Gradient/>
           </BottomBlock>
       

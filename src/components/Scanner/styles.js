@@ -58,7 +58,7 @@ export const CenterBlock = styled(TopBlock)`
 `
 export const CenterRight = styled.div`
   flex: 1;
-  background: rgba(0,0,0,0.7);
+  /* background: rgba(0,0,0,0.7); */
 `;
 export const Scope = styled.div`
   flex: 5;
@@ -66,13 +66,13 @@ export const Scope = styled.div`
 `;
 export const CenterLeft = styled.div`
   flex: 1;
-  background: rgba(0,0,0,0.7);
+  /* background: rgba(0,0,0,0.7); */
 `;
 
 export const Darker = styled.div`
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  /* background: rgba(0,0,0,0.7); */
   display: flex;
   justify-content: center;
   align-items: ${props => props.flexStart ? "flex-start" : props.flexEnd ? "flex-end" : "flex-end"};
