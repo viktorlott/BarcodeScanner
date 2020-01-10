@@ -101,6 +101,7 @@ function Scanner() {
                 </List> */}
             {/* </Darker> */}
             <Gradient/>
+            <div style={{height: "10%", width: "100%", backgroundColor: "black", position: "absolute", bottom: 0}}/>
           </BottomBlock>
       
         </ScannerContainer>

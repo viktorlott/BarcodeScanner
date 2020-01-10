@@ -3,9 +3,22 @@ import Quagga from 'quagga';
 import config from './config'
 import { useSelector, useDispatch } from 'react-redux'
 import { PRODUCT_REQUESTED, PRODUCT_EMIT } from '../constants';
+import scansound from './scansound.mp3'
 
-
-
+function Sound(src) {
+	this.sound = document.createElement("audio");
+	this.sound.src = src;
+	this.sound.setAttribute("preload", "auto");
+	this.sound.setAttribute("controls", "none");
+	this.sound.style.display = "none";
+	document.body.appendChild(this.sound);
+	this.play = function(){
+	  this.sound.play();
+	}
+	this.stop = function(){
+	  this.sound.pause();
+	}
+  }
 
 
 function useToggle() {
@@ -21,6 +34,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 	const [isPaused, pauseCTL] = useToggle()
 	const scanner = useRef()
 	const codes = useRef({})
+	const sound = useRef()
 	const isDisabled = useRef()
 	const dispatch = useDispatch()
 
@@ -33,7 +47,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 
 	useEffect(() => {
 		isDisabled.current = false
-
+		sound.current = new Sound(scansound)
 		const cb = err => {
 			if (err) {
 				console.log(err);
@@ -65,6 +79,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 	const detected = useCallback(data => {
 		if(isDisabled.current) return
 		if (codes.current[data.codeResult.code] >= 3) {
+			sound.current.play()
 			let drawingCtx = Quagga.canvas.ctx.overlay,
 			drawingCanvas = Quagga.canvas.dom.overlay;
 			drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
@@ -77,6 +92,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 
 			pauseCTL.on()
 			isDisabled.current = true
+
 
 			
 		}
@@ -103,11 +119,11 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
             }
 
             if (result.box) {
-                Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00FF00", lineWidth: 2});
+                Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00FF00", lineWidth: 1});
             }
 
             if (result.codeResult && result.codeResult.code) {
-                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: '#FF4500', lineWidth: 3});
+                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: '#FF4500', lineWidth: 2});
             }
         }
 	}, [isDisabled])

@@ -98,15 +98,9 @@ export const Gradient = styled.div`
   width: 100%;
   height: calc(100% - 70%);
   position: absolute;
-  bottom: 0;
+  bottom: 10%;
   background: linear-gradient(
-      rgba(0, 0, 0, 0.0) 0%,
-      rgba(0, 0, 0, 0.7) 50%,
-      rgba(0, 0, 0, 0.8) 70%,
-      rgba(0, 0, 0, 0.9) 80%,
-      rgba(0, 0, 0, 1) 90%,
-      rgba(0, 0, 0, 1) 95%,
-
+      rgba(0, 0, 0, 0) 0%,
       rgba(0, 0, 0, 1.0) 100%
     );
 
