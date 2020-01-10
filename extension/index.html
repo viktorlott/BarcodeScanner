@@ -18,6 +18,15 @@
 			overflow: scroll !important;
 			position: static !important
 		}
+
+		#root {
+			padding: 10px;
+		}
+
+		div > button {
+			margin: 5px 0 0 0;
+		}
+
 	</style>
 	<link href="/static/css/2.2ee1cb70.chunk.css" rel="stylesheet">
 	<link href="/static/css/main.807d0948.chunk.css" rel="stylesheet">
@@ -26,13 +35,10 @@
 <body><noscript>You need to enable JavaScript to run this app.</noscript>
 	<div id="root" style="width:700px">
 		<div>
-			<div id="current_room"></div>	
+			<div id="current_room" style="margin: 5px;">Scanner</div>	
 		</div>
 		<div>
-			<input type="text" id="room"/>
-		</div>
-		<div>
-			<button id="join_room">join room</button>
+			<input type="text" id="room"/> <button id="join_room">join room</button>
 		</div>
 		<div>
 			<button id="select_input">Select input</button>

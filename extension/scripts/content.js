@@ -8,6 +8,7 @@ let path = {
   _input: null,
   _button: null,
   _url: null,
+  _room: null,
   get input() {
     return window.localStorage.getItem("_input") || this._input
   },
@@ -28,6 +29,13 @@ let path = {
   set url(val) {
     this._url = val
     window.localStorage.setItem("_url", val)
+  },
+  get room() {
+    return window.localStorage.getItem("_room") || this._room
+  },
+  set room(val) {
+    this._room = val
+    window.localStorage.setItem("_room", val)
   }
 }
 
@@ -48,7 +56,15 @@ chrome.runtime.onMessage.addListener(
       case "SELECT_BUTTON_ELEMENT":
         selectButtonElement()
         break;
+      case "JOIN_ROOM":
+        console.log("request", request)
+        path.room = request.payload.roomname
+        break;
+      case "CHECK_ROOM":
+        // to popup
+        chrome.runtime.sendMessage({type: "SOCKET_ROOM_JOINED", payload: {roomname: path.room}})
 
+        break;
       case "SAVE_URL":
         path.url = window.location.href
         break;
@@ -177,3 +193,14 @@ function dompath(element) {
   }
   return path;
 }
+
+
+// chrome.browserAction.onClicked.addListener(function(tab) {
+//   console.log("CLICKED")
+// });
+// chrome.browserAction.onClicked.addListener(function(tab) {
+// 	console.log("CLICKED")
+// 	// const room = window.localStorage.getItem("_room") || "scanner"
+// 	// socket.emit("/room/join", room || "scanner")
+// 	// chrome.runtime.sendMessage(action)
+// })

@@ -8,7 +8,7 @@
   "content_scripts" : [
       {
         "matches": [ "<all_urls>" ],
-        "js": ["/static/js/index.js", "/scripts/content.js"]
+        "js": ["/scripts/content.js"]
       }
   ],
   "background": {
@@ -18,6 +18,6 @@
     ]
   },
   "permissions": [
-    "tabs"
+    "tabs", "activeTab"
   ]
 }

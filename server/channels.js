@@ -65,8 +65,6 @@ const joinRoom = (io, socket, app) => async room => {
 		}
 	)
 
-	
-
 }
 
 const leaveRoom = (io, socket) => room => {
@@ -94,6 +92,7 @@ module.exports = () => app => {
 		socket.on("/room/create", createRoomHandle)
 		socket.on("/room/join", joinRoomHandle)
 		socket.on("/room/leave", leaveRoomHandle)
+	
 
 
 
