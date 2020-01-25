@@ -254,7 +254,7 @@ export const ButtonNav = styled(NavLink)`
 	white-space: nowrap;
 	outline: none;
 	background: ${props => props.bg ? props.bg : "#fac742"};
-    padding: 5px;
+    padding: 10px 5px;
     text-align: center;
     border-radius: 2px;
     color: #222;
@@ -275,7 +275,7 @@ export const Button = styled.div`
 	white-space: nowrap;
 	outline: none;
 	background: ${props => props.bg ? props.bg : "#fac742"};
-    padding: 5px;
+    padding: 10px 5px;
     text-align: center;
     border-radius: 2px;
     color: #222;

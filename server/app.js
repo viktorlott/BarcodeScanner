@@ -1,42 +1,32 @@
 const express = require("express")
 const io = require("socket.io")
-
-
-const cors = require("cors")
-const helmet = require("helmet")
-const compress = require("compression")
+const http = require("http")
 
 const configure = require("./configure")
 
-const mongodb = require("./mongodb")
-const socket = require("./socket")
-const router = require("./router")
-const channels = require("./channels")
+const middleware = require("./middleware")
 const logger = require("./logger")
+const mongodb = require("./mongodb")
 const models = require("./models")
+const socket = require("./socket")
+const channels = require("./channels")
 const services = require("./services")
+const router = require("./router")
 
 const app = express()
 
-const http = require("http").createServer(app)
-
-
-app.use(cors())
-app.use(helmet())
-app.use(compress())
-
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+const server = http.createServer(app)
 
 configure(app).with(
+	middleware(),
 	logger(),
 	mongodb(),
 	models(),
-	socket(io, http),
+	socket(io, server),
 	channels(),
 	services(),
 	router()
-).start(http)
+).start(server)
 
 
 

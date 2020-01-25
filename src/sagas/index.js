@@ -40,7 +40,7 @@ function createSocketChannel(socket) {
 
 		socket.on("/receive/barcode", barcode => {
 			dispatch({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
-			dispatch({ type: EXTENSION_SEND_MESSAGE, payload: { type: "SEARCH_BARCODE", payload: barcode }})
+			// dispatch({ type: EXTENSION_SEND_MESSAGE, payload: { type: "SEARCH_BARCODE", payload: barcode }})
 		})
 
 		socket.on("/action", action => void dispatch(action))

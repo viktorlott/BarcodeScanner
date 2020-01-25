@@ -98,12 +98,12 @@ module.exports = () => app => {
 
 
 
-		socket.on("/post/barcode", (barcode) => {
+		socket.on("/post/barcode", (code) => {
 			const [_, room] = Object.keys(socket.rooms)
-			const barcodeModel = app.get("barcodemodel")()
+			const barcode = app.get("barcodemodel")()
 
-			barcodeModel.create({ code: barcode, ownername: room ? room : "scanner" })
-			socket.broadcast.to(room).emit("/receive/barcode", barcode)
+			barcode.create({ code, ownername: room ? room : "scanner" })
+			socket.broadcast.to(room).emit("/receive/barcode", code)
 		})
 
 

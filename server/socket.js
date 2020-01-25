@@ -1,7 +1,7 @@
 const { serverlog } = require("./utils")
 
-module.exports = (io, http) => app => {
-	const socketio = io(http, {
+module.exports = (io, server) => app => {
+	const socketio = io(server, {
 		path: process.env.SOCKET_PATH,
 		serveClient: false,
 
