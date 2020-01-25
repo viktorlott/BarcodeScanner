@@ -1,7 +1,9 @@
 import React from 'react'
-import { Table } from 'antd';
+import { Table, List, Icon } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
+import { Typography } from 'antd';
 
+const { Paragraph } = Typography;
 
 const columns = [
 	{
@@ -39,12 +41,22 @@ export default function Barcodes() {
 
 	return (
 		<div>
-			<Table
-				columns={columns}
-				dataSource={data}
+
+			<List
+				size="small"
 				bordered
-				title={() => 'List of scanned barcodes'}
+				dataSource={data}
+				renderItem={item => (
+					<List.Item> 
+						<Icon type="barcode" /> 
+						<span style={{marginLeft: 15}}>
+							<Paragraph style={{display: "inline-block", marginBottom: 0}} copyable>{item.code}</Paragraph>	 
+						</span>
+					</List.Item>
+				)}
 			/>
+
+
 		</div>
 	)
 }

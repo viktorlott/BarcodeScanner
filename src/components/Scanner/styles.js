@@ -12,8 +12,12 @@ export const Container = styled.div`
   background: black;
   position: fixed;
   z-index: 1000;
+  max-width: 700px;
+  margin: auto;
 
-
+  /* >video {
+    min-width: 700px;
+  } */
 `
 
 export const ScannerContainer = styled.div`
@@ -21,7 +25,8 @@ export const ScannerContainer = styled.div`
   /* height: 480px; */
   position: absolute;
   top: 0;
-  width: 100vw;
+  /* width: 100vw; */
+  width: 100%;
   height: 100vh;
 
   /* display:flex;
@@ -43,6 +48,7 @@ export const ScannerWrapper = styled.div`
   height: 100%; */
   position: relative;
   overflow: hidden;
+  
 
 `
 

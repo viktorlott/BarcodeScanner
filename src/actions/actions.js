@@ -32,7 +32,7 @@ const SOCKET = "SOCKET"
 const REST = "REST"
 
 const ROOM = "ROOM"
-const PRODUCT = "PRODUCT"
+// const PRODUCT = "PRODUCT"
 const BARCODE = "BARCODE"
 const LIST = "LIST"
 const MEMBER = "MEMBER"
@@ -80,8 +80,11 @@ function serverAction({type, item, crud}) {
 	}, {})
 }
 
-const Product = {
+export const Product = {
 	create: serverAction({type: CLIENT, item: PRODUCT, crud: CREATE}),
 	replaceAll: serverAction({type: SOCKET, item: PRODUCT, crud: UPDATE}),
 
 }
+
+
+

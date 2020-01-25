@@ -7,7 +7,7 @@ import store from './store'
 import { Provider } from 'react-redux'
 import './App.css';
 import 'antd/dist/antd.css';
-
+import Factory from './components/Factory'
 import {
 	BrowserRouter as Router,
 	Switch,

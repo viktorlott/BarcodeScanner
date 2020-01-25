@@ -30,7 +30,9 @@ code {
 }
 
 video {
-  width: 100vw;
+  /* width: 100vw; */
+  width: 100%;
+  max-width: 700px;
   height: 100vh;
   position: fixed;
   object-fit: cover!important;
@@ -93,4 +95,7 @@ video {
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
+}
+#root {
+	margin: auto;
 }
