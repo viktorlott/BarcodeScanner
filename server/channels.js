@@ -98,8 +98,9 @@ module.exports = () => app => {
 			const barcode = app.get("barcodemodel")()
 
 			let document = await barcode.createOrUpdate({ code, ownername: room ? room : "scanner" })
+			const bc = await barcode.find({code, ownername: room ? room : "scanner"})
 
-			emit(io, room, { type: "PRODUCT_ADD", payload: Array.isArray(document) ? document[0] : document })()
+			emit(io, room, { type: "PRODUCT_ADD", payload: bc })()
 	
 		})
 
