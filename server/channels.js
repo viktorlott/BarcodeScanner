@@ -74,8 +74,6 @@ const leaveRoom = (io, socket) => room => {
 }
 
 
-
-
 module.exports = () => app => {
 	const io = app.get("socket")
 
@@ -95,15 +93,14 @@ module.exports = () => app => {
 	
 
 
-
-
-
-		socket.on("/post/barcode", (code) => {
+		socket.on("/post/barcode", async (code) => {
 			const [_, room] = Object.keys(socket.rooms)
 			const barcode = app.get("barcodemodel")()
 
-			barcode.create({ code, ownername: room ? room : "scanner" })
-			socket.broadcast.to(room).emit("/receive/barcode", code)
+			let document = await barcode.createOrUpdate({ code, ownername: room ? room : "scanner" })
+
+			emit(io, room, { type: "PRODUCT_ADD", payload: Array.isArray(document) ? document[0] : document })()
+	
 		})
 
 

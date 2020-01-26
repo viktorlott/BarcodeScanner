@@ -85,7 +85,7 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
 			drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
 
 			emitBarcode(data)
-			fetchBarcodeProduct(data)
+			// fetchBarcodeProduct(data)
 
 			setState(prev => ({...prev, match: data.codeResult }))
 			codes.current = {}
@@ -118,12 +118,12 @@ function useScanner({onStart=() => {}, onMatch=() => {} }) {
                 });
             }
 
-            if (result.box) {
-                Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00FF00", lineWidth: 1});
-            }
+            // if (result.box) {
+            //     Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00FF00", lineWidth: 1});
+            // }
 
             if (result.codeResult && result.codeResult.code) {
-                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: '#FF4500', lineWidth: 2});
+                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: '#FF4500', lineWidth: 4});
             }
         }
 	}, [isDisabled])

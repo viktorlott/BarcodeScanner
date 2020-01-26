@@ -6,6 +6,7 @@ import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
 import { joinRoom, createRoom, leaveRoom } from './rooms';
 import { toExtension } from './extension';
+import { addProduct } from '../actions/products.action';
 
 let socket;
 // const d = io(process.env.REACT_APP_SERVER_URL, { path: "/stream"})
@@ -38,9 +39,10 @@ function createSocketChannel(socket) {
 
 		socket.on("connect", msg => console.log("Connected -> " , socket.id))
 
-		socket.on("/receive/barcode", barcode => {
-			dispatch({ type: PRODUCT_REQUESTED, payload: {code: barcode}})
-			// dispatch({ type: EXTENSION_SEND_MESSAGE, payload: { type: "SEARCH_BARCODE", payload: barcode }})
+		socket.on("/receive/barcode", document => {
+			console.log(document)
+			dispatch(addProduct(document))
+			// dispatch({ type: PRODUCT_REQUESTED, payload: document})
 		})
 
 		socket.on("/action", action => void dispatch(action))

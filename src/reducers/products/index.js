@@ -7,10 +7,19 @@ function products(state=[], action) {
 		case PRODUCT_REPLACE_ALL: 
 		return action.payload
 		case PRODUCT_ADD: 
+
+			for(let [index, product] of Object.entries(state)) {
+				if(product.code === action.payload.code) {
+
+					state[index] = action.payload
+					console.log("action found", action, state)
+					return state
+				}
+			}
+			console.log("action", action, state)
 			return [...state, action.payload]
 		case PRODUCT_UPDATE:
 			return state.map(scanresult => {
-
 				if( action.payload && action.payload.productid && scanresult.code === action.payload.productid) {
 					scanresult.product = action.payload
 				}

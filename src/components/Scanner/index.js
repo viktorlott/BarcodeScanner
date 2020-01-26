@@ -78,7 +78,7 @@ function Scanner() {
                       <h3>Match hittad!</h3>
                       	<div onClick={e => ctl.start()}><Barcode  ref={barcodeRef} /></div>
 						<ButtonNav bc={"#025190"|| "#3f535d"} bg={"#017ad4" || "#607d8b"} to="/barcodes">List</ButtonNav>
-						<Button onClick={e => ctl.start()}>Back</Button>
+						<Button onClick={e => ctl.start()}>Scan again</Button>
                     </MatchFound>
                     {/* <BottomRight className="border" match={state.match}/> */}
                     {/* <BottomLeft className="border" match={state.match}/> */}

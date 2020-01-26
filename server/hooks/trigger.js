@@ -306,8 +306,8 @@ setValue(m, ["test", "test", "[0]"], "jens")
 setValue(m, ["test", "names"], "jens")
 
 
-console.log(JSON.stringify(m, null, 2))
-console.log(m)
+// console.log(JSON.stringify(m, null, 2))
+// console.log(m)
 
 function schemaChecker({ value, vparent, vparentkey }, { schema, sparent, sparentkey }, arr=[], path=[]) {
 	if(isFunction(schema)) {
@@ -366,7 +366,7 @@ function Schema(schema) {
 const Person = Schema(schema)
 
 
-console.log(Person.validate(value))
+// console.log(Person.validate(value))
 
 
 const eventsSchema = {
@@ -415,7 +415,7 @@ function addTriggers(obj, events) {
 						(name in events.before) &&  await trigger("before", name, args)
 						let result
 						try {
-							result = value.call(this, ...args)
+							result = await Promise.resolve(value.call(this, ...args))
 						} catch(error) {
 							(name in events.error) &&  await trigger("error", name, args, error)
 							return error

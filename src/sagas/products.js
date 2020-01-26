@@ -16,9 +16,9 @@ import { addProduct, populateProductWithData } from '../actions/products.action'
 
 export function* fetchProduct(action) {
 
-	yield put(addProduct(action.payload))
-	const product = yield call(fetchMaxiProduct, action.payload.code)
-	yield put(populateProductWithData(product))
+	// yield put(addProduct(action.payload))
+	// const product = yield call(fetchMaxiProduct, action.payload.code)
+	// yield put(populateProductWithData(product))
 }
 
 
