@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import useScanner from './hooks/useScanner'
 import JsBarcode from "jsbarcode";
 import Scanner from './components/Scanner'
+import Login from './views/Login'
 import { useSelector, useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import { addProduct, populateProductWithData } from './actions/products.action';
 
 import { Input, Button } from 'antd';
@@ -36,7 +38,7 @@ const error = msg => {
 };
 
 
-const SiderDemo = () => {
+const AppManager = () => {
   const [state, setState] = useState({
     collapsed: true,
     room: "scanner",
@@ -78,7 +80,7 @@ const SiderDemo = () => {
 
   const onChange = (str) => setState(prev => ({ ...prev, room: str}))
     return (
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{  }}>
 
         <Layout>
 
@@ -91,11 +93,11 @@ const SiderDemo = () => {
             title="Room:"
             subTitle={<Paragraph level="h4" ellipsis={true} editable={{ onChange }}>{state.room}</Paragraph>}
             extra={[
-              <CollectionsPage onCreate={room_name => {
+              <CollectionsPage  key="collectionsPage" onCreate={room_name => {
                 dispatch({type: SOCKET_ROOM_CREATE_REQUESTED, payload: {roomname: room_name}})
                 setState(prev => ({...prev, room: room_name}))
               }}/>, 
-              <Link  to="/scanner">
+              <Link key="scanner" to="/scanner">
                 <Button type="danger">
                     <Icon type="scan" />
                     <span>Scanner</span>
@@ -132,16 +134,16 @@ const SiderDemo = () => {
 
             <Row gutter={[10]}>
               {/* <Col span="6">
-              <Input value={state.room} onChange={(e) => setState(prev => ({ ...prev, room: e.target.value}))}/>
-              {rooms.error && <div>{rooms.error.message}</div>}
-              </Col> */}
-              {/* <Col span="3">
-                <Button onClick={() => dispatch({type: SOCKET_ROOM_CREATE_REQUESTED, payload: {roomname: state.room}})}>Create</Button>  
-              </Col> */}
-              {/* <Col span="3">
-              <Button onClick={() => dispatch({type: SOCKET_ROOM_JOIN_REQUESTED, payload: {roomname: state.room}})}>Join</Button>  
-                        
-              </Col> */}
+                <Input value={state.room} onChange={(e) => setState(prev => ({ ...prev, room: e.target.value}))}/>
+                {rooms.error && <div>{rooms.error.message}</div>}
+                </Col> */}
+                {/* <Col span="3">
+                  <Button onClick={() => dispatch({type: SOCKET_ROOM_CREATE_REQUESTED, payload: {roomname: state.room}})}>Create</Button>  
+                </Col> */}
+                {/* <Col span="3">
+                <Button onClick={() => dispatch({type: SOCKET_ROOM_JOIN_REQUESTED, payload: {roomname: state.room}})}>Join</Button>  
+                          
+                </Col> */}
             </Row>
           </PageHeader>
    
@@ -154,17 +156,31 @@ const SiderDemo = () => {
 }
 
 
+
+
+
 function App() {
+  const user = useSelector(state => state.user)
+  const history = useHistory()
 
 
   useEffect(() => {
-
-  },[])
+    if(!user.token) history.replace("/login")
+  },[user])
   
   return (
     <div>
-      <Route path="/scanner" render={() => <Scanner />}/>
-      <Route path="/" render={() => <SiderDemo />}/>
+      <Switch>
+        <Route path="/login" render={() => {
+          return (
+            <Layout>
+                <Login /> 
+            </Layout>    
+          )
+        }}/>
+        <Route path="/scanner" render={() => <Scanner />}/>
+        <Route path="/" render={() => <AppManager />}/>
+      </Switch>
     </div>
   );
 }

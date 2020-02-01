@@ -1,7 +1,7 @@
 
-import { takeEvery, all, fork, take, call, put } from 'redux-saga/effects';
+import { takeEvery, all, fork, take, call, put, cancelled, cancel, select } from 'redux-saga/effects';
 import { fetchProduct, emitProduct } from './products';
-import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, EXTENSION_SEND_MESSAGE } from '../constants';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, EXTENSION_SEND_MESSAGE, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT_REQUESTED, LOGIN_REQUESTED } from '../constants';
 import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
 import { joinRoom, createRoom, leaveRoom } from './rooms';
@@ -9,35 +9,22 @@ import { toExtension } from './extension';
 import { addProduct } from '../actions/products.action';
 
 let socket;
-// const d = io(process.env.REACT_APP_SERVER_URL, { path: "/stream"})
-
-// d.on("/receive/barcode", barcode => {
-// 		/*global chrome*/
-// 		chrome.tabs.query({ active: true, currentWindow: true },
-// 			function (tabs) {
-// 				const activeTab = tabs[0];
-// 				/*global chrome*/
-// 				chrome.tabs.sendMessage(activeTab.id,
-// 					barcode
-// 			);
-// 		});
-// })
-
 
 function createSocketConnection() {
-		socket = io(process.env.REACT_APP_SERVER_URL, { path: "/stream"})
-		return new Promise((resolve) => {
-			socket.on("connect", () => {
-				resolve(socket);
-			});
+	console.count("createSocketConnection")
+	socket = io(process.env.REACT_APP_SERVER_URL, { path: "/stream" })
+	return new Promise((resolve) => {
+		socket.on("connect", () => {
+			resolve(socket);
 		});
+	});
 }
 
 
 function createSocketChannel(socket) {
 	return eventChannel(dispatch => {
 
-		socket.on("connect", msg => console.log("Connected -> " , socket.id))
+		socket.on("connect", msg => console.log("Connected -> ", socket.id))
 
 		socket.on("/receive/barcode", document => {
 			console.log(document)
@@ -49,7 +36,7 @@ function createSocketChannel(socket) {
 
 		// on unsubscribe
 		return () => {
-			
+
 		}
 	})
 }
@@ -73,15 +60,15 @@ function createSocketEmitter(socket) {
  * It waits for a channel event and when it gets it, the action gets dispatched
  * @param {*} channel 
  */
-function* websocketSaga(channel) {
-	while(true) {
+function* createWebsocketDispatcher(channel) {
+	while (true) {
 		const action = yield take(channel)
 		yield put(action)
 	}
 }
 
 
-function* eventBus(...args) {
+function* createEventBUS(...args) {
 	const [socket, emit] = args
 
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
@@ -91,29 +78,72 @@ function* eventBus(...args) {
 	yield takeEvery(SOCKET_ROOM_LEAVE_REQUESTED, leaveRoom, emit)
 	yield takeEvery(SOCKET_ROOM_CREATE_REQUESTED, createRoom, emit)
 
-	// yield takeEvery(SOCKET_ROOM_CREATED, createRoom)
-	// yield takeEvery(SOCKET_ROOM_JOINED, createRoom)
-	// yield takeEvery(SOCKET_ROOM_LEFT, createRoom)
-
-
-	yield takeEvery(EXTENSION_SEND_MESSAGE, toExtension)
-
-
-
-
 }
 
 
-function* rootSaga(){
+function* authorize(username, password) {
+	try {
+		const token = yield call(async function authorize(username, password) {
+			const result = await fetch(process.env.REACT_APP_SERVER_URL+"/auth/login", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password })
+			}).then(response => response.json())
+			console.log(result)
+			if(result.token) return result.token
+			throw new Error("Failed to login")
 
+		}, username, password)
+
+		console.log("Success", token)
+
+		yield put({ type: LOGIN_SUCCESS, token })
+		yield call(function storeToken(token) {}, { token })
+		const user = yield select(state => state.user)
+		console.log("user", user)
+		return token
+	} catch (error) {
+		console.log("Error", error)
+		yield put({ type: LOGIN_ERROR, error })
+	} finally {
+		if (yield cancelled()) {
+			// ... put special cancellation handling code here
+		}
+	}
+}
+
+function* createLoginFlow() {
+	while (true) {
+		const { payload } = yield take(LOGIN_REQUESTED)
+		const { username, password } = payload 
+
+		// fork return a Task object
+		const task = yield fork(authorize, username, password)
+
+		const action = yield take([LOGOUT_REQUESTED, LOGIN_ERROR])
+		if (action.type === LOGOUT_REQUESTED)
+			yield cancel(task)
+		yield call(function clearToken(token) {}, 'token')
+	}
+}
+
+
+
+function* rootSaga() {
+	
+	
 	const socket = yield call(createSocketConnection)
 	const channel = yield call(createSocketChannel, socket)
 	const emit = yield call(createSocketEmitter, socket)
-
+	
 	// We fork this so it has its own thread
-	yield fork(websocketSaga, channel)
+	yield fork(createLoginFlow)
+	yield fork(createWebsocketDispatcher, channel)
+	yield fork(createEventBUS, socket, emit)
 
-	yield fork(eventBus, socket, emit)
+
+	// yield put({ type: LOGIN_REQUESTED, payload: { username: "viktor", password: "123" } })
+
 }
 
 

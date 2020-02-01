@@ -11,7 +11,7 @@ class Local {
 	}
 
 	_signWith(permissions) {
-		const token = jwt.sign({payload, date: this.date, permissions}, process.env.JWT_SECRET)
+		const token = jwt.sign({...this.payload, date: this.date, permissions}, process.env.JWT_SECRET)
 		return token
 	}
 
@@ -19,7 +19,7 @@ class Local {
 		return {
 			name: "Admin Viktor Lott",
 			token: this._signWith(["superadmin"]),
-			...payload
+			...this.payload
 		}
 	}
 
