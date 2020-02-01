@@ -2,10 +2,10 @@ import React from 'react'
 import { Table, List, Icon } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
 import { Typography } from 'antd';
+import InfiniteScroll from 'react-infinite-scroller';
 
 const { Paragraph } = Typography;
 
-import InfiniteScroll from 'react-infinite-scroller';
 
 export default function Barcodes() {
 	const list = useSelector(state => state.products)
