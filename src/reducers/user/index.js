@@ -5,8 +5,7 @@ import jwt from 'jsonwebtoken'
 function user(state={}, action) {
 	switch(action.type) {
         case LOGIN_SUCCESS: 
-            const profile = jwt.decode(action.token, { json: true })
-			return { token: action.token,  ...profile }
+			return { token: action.payload.token,  ...action.payload.profile }
 		case LOGIN_ERROR: 
             return {}
         case LOGOUT_SUCCESS: 
