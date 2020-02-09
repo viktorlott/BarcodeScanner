@@ -1,7 +1,7 @@
 
 import { takeEvery, all, fork, take, call, put, cancelled, cancel, select, race, wait, delay } from 'redux-saga/effects';
-import { fetchProduct, emitProduct } from './products';
-import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, EXTENSION_SEND_MESSAGE, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT_REQUESTED, LOGIN_REQUESTED, LOGOUT_SUCCESS } from '../constants';
+import { fetchProduct, emitProduct, deleteProduct } from './products';
+import { PRODUCT_REQUESTED, PRODUCT_EMIT, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, SOCKET_ROOM_LEAVE_REQUESTED, SOCKET_ROOM_CREATED, SOCKET_ROOM_JOINED, SOCKET_ROOM_LEFT, EXTENSION_SEND_MESSAGE, LOGIN_SUCCESS, LOGIN_ERROR, LOGOUT_REQUESTED, LOGIN_REQUESTED, LOGOUT_SUCCESS, PRODUCT_DELETE } from '../constants';
 import io from 'socket.io-client'
 import { eventChannel } from 'redux-saga';
 import { joinRoom, createRoom, leaveRoom } from './rooms';
@@ -74,6 +74,7 @@ function* createEventBUS(...args) {
 
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
 	yield takeEvery(PRODUCT_EMIT, emitProduct, emit)
+	yield takeEvery(PRODUCT_DELETE, deleteProduct, emit)
 
 	yield takeEvery(SOCKET_ROOM_JOIN_REQUESTED, joinRoom, emit)
 	yield takeEvery(SOCKET_ROOM_LEAVE_REQUESTED, leaveRoom, emit)

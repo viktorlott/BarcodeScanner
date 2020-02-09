@@ -105,6 +105,19 @@ module.exports = () => app => {
 		})
 
 
+		socket.on("/delete/barcode", async (code) => {
+			const [_, room] = Object.keys(socket.rooms)
+			const barcode = app.get("barcodemodel")()
+
+			let document = await barcode.decrease({ code, ownername: room ? room : "scanner" })
+			// const bc = await barcode.find({code, ownername: room ? room : "scanner"})
+			const barcodes = await barcode.findCodesForOwner({ownername: room})
+			emit(io, room, { type: "PRODUCT_REPLACE_ALL", payload: barcodes })() 
+			// emit(io, room, { type: "PRODUCT_ADD", payload: bc })()
+	
+		})
+
+
 		socket.on("disconnect", () => {
 			listRoomMembers(io, socket)(socket.barcode_room)
 		})

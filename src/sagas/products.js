@@ -26,6 +26,10 @@ export function* emitProduct(emit, action) {
 	emit("/post/barcode", action.payload.code)
 }
 
+export function* deleteProduct(emit, action) {
+	emit("/delete/barcode", action.payload.code)
+}
+
 
 
 

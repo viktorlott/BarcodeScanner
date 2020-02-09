@@ -12,7 +12,7 @@ export const Container = styled.div`
   background: black;
   position: fixed;
   z-index: 1000;
-  max-width: 700px;
+  /* max-width: 700px; */
   margin: auto;
 
   /* >video {

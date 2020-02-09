@@ -15,10 +15,39 @@ class BarcodeModel {
 	}
 
 
-	async update({code, ownername}) {
+	// async update({code, ownername}) {
+	// 	let updateResult = null
+	// 	try {
+	// 		updateResult = await this.collection.updateOne({ code, ownername }, { $inc: { amount: 1 } })
+	// 	} catch(dberror) {
+	// 		const error = new Error("Update failed, object doesnt exists")
+	// 		console.log(dberror)
+	// 		return { status: "error", error }
+
+	// 	}
+	// 	return { status: "success", result: updateResult }
+	// }	
+
+
+	// async increase({code, ownername}) {
+	// 	let updateResult = null
+	// 	try {
+	// 		updateResult = await this.collection.updateOne({ code, ownername }, { $inc: { amount: 1 } })
+	// 	} catch(dberror) {
+	// 		const error = new Error("Update failed, object doesnt exists")
+	// 		console.log(dberror)
+	// 		return { status: "error", error }
+
+	// 	}
+	// 	return { status: "success", result: updateResult }
+	// }
+
+	async decrease({code, ownername}) {
 		let updateResult = null
 		try {
-			updateResult = await this.collection.updateOne({ code, ownername }, { $inc: { amount: 1 } })
+			let doc = await this.collection.findOne({ code, "owner.query.name": ownername })
+			if(doc && doc.amount === 0) return { status: "success", result: { ok: true } }
+			updateResult = await this.collection.updateOne({ code, "owner.query.name": ownername }, { $inc: { amount: -1 } })
 		} catch(dberror) {
 			const error = new Error("Update failed, object doesnt exists")
 			console.log(dberror)
@@ -26,7 +55,7 @@ class BarcodeModel {
 
 		}
 		return { status: "success", result: updateResult }
-	}	
+	}
 
 	async create({code, ownername}) {
 		const indexResult = await this.collection.createIndex({ "owner.query.name": 1, "owner.type": 1 })
@@ -48,7 +77,7 @@ class BarcodeModel {
 		let findResult = null
 		const error = new Error("Barcodes not found")
 		try {
-			findResult = await this.collection.find({ "owner.query.name": ownername }).toArray()
+			findResult = await this.collection.find({ "owner.query.name": ownername, amount: { $ne: 0 } }).toArray()
 		} catch(dberror) {
 			return Promise.resolve({ status: "error", error })
 		}
@@ -59,7 +88,7 @@ class BarcodeModel {
 		let findResult = null
 		const error = new Error("Barcode not found")
 		try {
-			findResult = await this.collection.findOne({ code, "owner.query.name": ownername })
+			findResult = await this.collection.findOne({ code, "owner.query.name": ownername, amount: { $ne: 0 } })
 		} catch(dberror) {
 			return Promise.resolve({ status: "error", error })
 		}

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ericblade/quagga2": "^0.0.18",
+    "@sandstreamdev/react-swipeable-list": "^0.4.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -43,6 +45,7 @@
   },
   "scripts": {
     "secure": "react-scripts start",
+    "app": "node ./server/index.js&yarn run start&",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
