@@ -5,21 +5,27 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import store from './store'
 import { Provider } from 'react-redux'
-import './App.css';
-import 'antd/dist/antd.css';
-import Factory from './components/Factory'
 import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
 	Link,
-  } from "react-router-dom";
+} from "react-router-dom";
+import Layout from './containers/Layout'
+
+// import Factory from './components/Factory'
+
+import './App.css';
+import 'antd/dist/antd.css';
+
+import 'antd-mobile/dist/antd-mobile.css';
 
 function Root() {
 	return (
 		<Provider store={store}>
 			<Router>
 				<App/>
+				{/* <Layout/> */}
 			</Router>
 		</Provider>
 	)

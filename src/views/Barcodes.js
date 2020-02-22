@@ -1,14 +1,58 @@
 import React from 'react'
-import { Table, List, Icon, Button } from 'antd';
+import { Table, Icon, Button } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
 import { Typography } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { SwipeableList, SwipeableListItem } from '@sandstreamdev/react-swipeable-list';
 import '@sandstreamdev/react-swipeable-list/dist/styles.css';
-import { PRODUCT_DELETE } from '../constants';
-
+import { PRODUCT_DELETE, PRODUCT_ADD, PRODUCT_EMIT } from '../constants';
+import { NavBar, TabBar, ListView, Row, SwipeAction, List } from 'antd-mobile';
 const { Paragraph } = Typography;
 
+
+
+function Items(props) {
+	const { dispatch } = props
+
+    return (
+
+        <List>
+            {props.data.map(item => {
+                return (
+                    <SwipeAction
+                        style={{ backgroundColor: 'gray' }}
+                        autoClose
+                        right={[
+                            {
+                            text: 'Remove',
+                            onPress: () => dispatch({type: PRODUCT_DELETE, payload: { code: item.code }}),
+                            style: { backgroundColor: '#F4333C', color: 'white' },
+                            },
+                            {
+                            text: 'Add',
+                            onPress: () => dispatch({type: PRODUCT_EMIT, payload:  { code: item.code } }),
+                            style: { backgroundColor: '#108ee9', color: 'white' },
+                            }
+                        ]}
+                        onOpen={() => console.log('global open')}
+                        onClose={() => console.log('global close')}>
+
+						<List.Item
+							extra={"x" + item.amount || "1"}
+							arrow="horizontal"
+							onClick={e => console.log(e)}>
+								<Icon type="barcode" />
+								<span style={{ marginLeft: 15 }}>
+									<Paragraph style={{ display: "inline-block", marginBottom: 0 }} copyable>{item.code}</Paragraph>
+									{/* <div style={{ display: "inline-block", position: "absolute", right: 0, paddingRight: 10 }}>x{item.amount || "1"}</div> */}
+								</span>
+						</List.Item>
+					</SwipeAction>
+                )
+            })}
+        </List>
+    )
+}
 
 export default function Barcodes() {
 	const list = useSelector(state => state.products)
@@ -37,7 +81,12 @@ export default function Barcodes() {
 					initialLoad={false}
 					pageStart={0}
 					useWindow={true}>
-					<List
+					<Items
+						data={data}
+						dispatch={dispatch}
+					/>
+
+					{/* <List
 						size="default"
 						dataSource={data}
 						renderItem={item => (
@@ -59,7 +108,7 @@ export default function Barcodes() {
 									</List.Item>
 							</SwipeableListItem>
 						)}
-					/>
+					/> */}
 				</InfiniteScroll>
 
 			</SwipeableList>

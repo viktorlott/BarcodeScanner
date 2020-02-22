@@ -9,7 +9,10 @@ import { useHistory } from 'react-router-dom'
 import { addProduct, populateProductWithData } from './actions/products.action';
 
 import { Input, Button } from 'antd';
+import { Layout, Menu, Breadcrumb, Icon, Badge, PageHeader, Tag, Statistic, Descriptions, Row, Col, Typography, Divider, message } from 'antd';
 
+
+import { TabBar } from 'antd-mobile'
 
 import {
   BrowserRouter as Router,
@@ -20,7 +23,6 @@ import {
   useLocation
 } from "react-router-dom";
 
-import { Layout, Menu, Breadcrumb, Icon, Badge, PageHeader, Tag, Statistic, Descriptions, Row, Col, Typography, Divider, message } from 'antd';
 import Barcodes from './views/Barcodes'
 import { fetchMaxiProduct } from './utils/fetchApi';
 import { PRODUCT_REQUESTED, SOCKET_ROOM_CREATE_REQUESTED, SOCKET_ROOM_JOIN_REQUESTED, EXTENSION_SEND_MESSAGE } from './constants';
@@ -104,33 +106,9 @@ const AppManager = () => {
                 </Button>
               </Link>,
             ]}
-            footer={
-              <Content style={{ margin: '0', height: "calc(100% - 300px)", overflowY: "scroll" }}>
-              <div style={{ background: '#fff', minHeight: 360 }}>
-                <Switch>
-                  <Route path="/" render={() => (
-                    <Row>
-                        <Barcodes/>
-                    </Row>
-                  )}/>
-                </Switch>
 
-              </div>
-            </Content>
-            }>
-            <Descriptions size="large" column={2}>
-              <Descriptions.Item label="Active">
-                <Badge status="success" style={{marginRight: "-5px"}} /> <span>{Object.keys(rooms.members).length}</span>
-              </Descriptions.Item>
-              <Descriptions.Item label="Amount">
-                <a>{products.length}</a>
-              </Descriptions.Item>
-
+            >
           
-              <Descriptions.Item label="Creation Time">2017-01-10</Descriptions.Item>
-              <Descriptions.Item label="Created">Viktor Lott</Descriptions.Item>
-            </Descriptions>
-            <Divider>Barcodes</Divider>
 
             <Row gutter={[10]}>
               {/* <Col span="6">
@@ -146,9 +124,38 @@ const AppManager = () => {
                 </Col> */}
             </Row>
           </PageHeader>
-   
-
           </Header>
+      
+
+          <Content style={{ padding: 0, margin: '0', height: "calc(100% - 300px)", overflowY: "scroll", position: "relative", bottom: 0 }}>
+              {/* <Divider>Barcodes</Divider> */}
+              <div style={{padding: "91px 0px 10px 40px"}}>
+                <Descriptions size="large" column={2}>
+                      <Descriptions.Item label="Active">
+                        <Badge status="success" style={{marginRight: "-5px"}} /> <span>{Object.keys(rooms.members).length}</span>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Amount">
+                        <a>{products.length}</a>
+                      </Descriptions.Item>
+
+                  
+                      <Descriptions.Item label="Creation Time">2017-01-10</Descriptions.Item>
+                      <Descriptions.Item label="Created">Viktor Lott</Descriptions.Item>
+                  </Descriptions>
+              </div>
+              
+              <div style={{ background: '#fff', minHeight: 360 }}>
+                <Switch>
+                  <Route path="/" render={() => (
+                    <Row>
+                          <Barcodes/>
+                 
+                      </Row>
+                    )}/>
+                </Switch>
+
+              </div>
+          </Content>
           
         </Layout>
       </Layout>
