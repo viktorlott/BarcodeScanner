@@ -72,6 +72,7 @@ function* createWebsocketDispatcher(channel) {
 function* createEventBUS(...args) {
 	const [socket, emit] = args
 
+
 	yield takeEvery(PRODUCT_REQUESTED, fetchProduct)
 	yield takeEvery(PRODUCT_EMIT, emitProduct, emit)
 	yield takeEvery(PRODUCT_DELETE, deleteProduct, emit)

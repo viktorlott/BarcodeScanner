@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 import Layout from './containers/Layout'
 
-// import Factory from './components/Factory'
+import Factory from './components/Factory'
 
 import './App.css';
 import 'antd/dist/antd.css';
@@ -24,8 +24,9 @@ function Root() {
 	return (
 		<Provider store={store}>
 			<Router>
-				<App/>
+				{/* <App/> */}
 				{/* <Layout/> */}
+				<Factory/>
 			</Router>
 		</Provider>
 	)

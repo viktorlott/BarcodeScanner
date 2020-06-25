@@ -101,7 +101,6 @@ module.exports = () => app => {
 			const bc = await barcode.find({code, ownername: room ? room : "scanner"})
 
 			emit(io, room, { type: "PRODUCT_ADD", payload: bc })()
-	
 		})
 
 

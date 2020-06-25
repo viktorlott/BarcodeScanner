@@ -6,7 +6,8 @@ import { combineReducers } from 'redux'
 const reducers = combineReducers({
 	user,
 	products,
-	rooms
+	rooms,
+	Barcodes: () => ({"1234": "test1234test"})
 })
 
 
