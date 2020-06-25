@@ -9,11 +9,9 @@ import actions from '../../actions'
 
 import get from 'lodash/get'
 
-
 import schema from './schema_test'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { isBoolean } from "lodash";
 
 import ConditionEvaluation from './ConditionEvaluation'
 
@@ -70,8 +68,7 @@ const useValidator = (target, scheme, rules) => {
 
 
 const components = {
-	Input: ({ props, state, setstate, rules = [], required, validations, helpMessages, validationStatus, events, defaultValue }) => {
-
+	Input: ({ props, state, setstate, rules = [], required, validations, helpMessages, validationStatus, events, defaultState }) => {
 		return (
 			<Form labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
 				<Form.Item
@@ -81,7 +78,7 @@ const components = {
 					hasFeedback
 					validateStatus={validationStatus}
 					help={helpMessages.map((validation, i) => <div key={i} style={{ fontSize: 12 }}>{validation.message}</div>)}>
-					<Input placeholder={props.placeholder} value={state} defaultValue={defaultValue} style={props.style} onChange={e => void setstate(e.target.value)} />
+					<Input placeholder={props.placeholder} value={state || defaultState} style={props.style} onChange={e => void setstate(e.target.value)} />
 				</Form.Item>
 			</Form>
 		)
@@ -123,9 +120,9 @@ function createSharedStore(init, name) {
 
 	const _has = (listen, name, filter) => filter ? listen.includes(name) : true
 
-	const useSharedState = (name, personalState = {}, listen, options = {}) => {
+	const useSharedState = (name, personalState = () => ({}), listen, options = {}) => {
 
-		const [state, setState] = useState({ ..._state, [name]: personalState });
+		const [state, setState] = useState({ ..._state, [name]: personalState(_state) });
 
 		const _options = useMemo(() => ({ filter: options.filter }), [options])
 		const _dependency = [...listen, state, _options]
@@ -133,7 +130,7 @@ function createSharedStore(init, name) {
 
 		useEffect(() => {
 			const compID = ++_idCounter;
-			_state = { ..._state, [name]: personalState };
+			_state = { ..._state, [name]: personalState(_state) };
 			_updatePrevComponents(_state);
 
 			_connectedComponents.push({ id: compID, name, listen, setState });
@@ -359,7 +356,7 @@ function Structure(comp) {
 
 	const Component =                                     useMemo(() => getComponentByType(type), [])
 	const factoryContext =                                useContext(FactoryContext)
-	const [personalState, state, setState] =              useSharedState(name, defaultState, [name, ...bind], { filter: true })
+	const [personalState, state, setState] =              useSharedState(name, (_state) => defaultState ? generateEvent({ ...defaultState, context: { components: _state }, functions: factoryContext.functions }) : null, [name, ...bind], { filter: true })
 	const [validations, helpMessages, validationStatus] = useValidator({ components: state, state: personalState }, scheme, rules)
 	const isRequired =                                    useMemo(() => validations.some(valid => (valid.target.type === "Required" && !valid.valid)), [validationStatus])
 	const _events =                                       useComponentEvents({events, context: { components: state }, name, functions: factoryContext.functions})
@@ -368,15 +365,12 @@ function Structure(comp) {
 
 	useEffectHandlers(effects, state, factoryContext)
 
-	const defaultValue = useMemo(() => props.defaultValue ? generateEvent({ ...props.defaultValue , context: { components: state }, functions: factoryContext.functions }) : null, [])
-
 	const size = span ? { span } : {}
 
 	return useMemo(() =>
 		<Component
 			{...size}
 			props={props}
-			defaultValue={defaultValue}
 			name={name}
 			state={state[name]}
 			setstate={setState}

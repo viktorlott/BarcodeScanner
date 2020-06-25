@@ -97,14 +97,13 @@ const schema = {
 								{ path: "state", type: "RegExp",   message: "Match not found" }
 							],
 							required: true,
-							defaultState: "",
+							defaultState: {
+                                type: "string",
+                                data: { value: "hello" }
+                            },
 							props: {
 								label: "Name",
-                                style: { width: "100%" },
-                                defaultValue: {
-                                    type: "string",
-                                    data: { value: "hello" }
-                                }
+                                style: { width: "100%" }
 							},
 							actions: [],
 							bind: []
@@ -138,28 +137,65 @@ const schema = {
                                     { 
                                         type: "statement", 
                                         condition: {   
-                                            type: "and",
-                                            right: { 
-                                                type: "string", 
-                                                data: {
-                                                    value: "test12344343"
-                                                }
-                                            }, 
+                                            type: "equal",
                                             left: {   
+                                                type: "equal",
+                                                left: { 
+                                                    type: "equal", 
+                                                    left: { 
+                                                        type: "bool", 
+                                                        data: {
+                                                            value: false
+                                                        }
+                                                    },
+                                                    right: { 
+                                                        type: "equal",
+                                                        left: { 
+                                                            type: "string", 
+                                                            data: {
+                                                                value: "jens"
+                                                            }
+                                                        },
+                                                        right: { 
+                                                            type: "string", 
+                                                            data: {
+                                                                value: "viktor"
+                                                            }
+                                                        }, 
+                                                     
+                                                    }
+                                                },
+                                                right: { 
+                                                    type: "equal",
+                                                    right: { 
+                                                        type: "string", 
+                                                        data: {
+                                                            value: "viktor"
+                                                        }
+                                                    }, 
+                                                    left: { 
+                                                        type: "string", 
+                                                        data: {
+                                                            value: "jens"
+                                                        }
+                                                    } 
+                                                }
+                                            },
+                                            right: { 
                                                 type: "equal",
                                                 right: { 
                                                     type: "string", 
                                                     data: {
-                                                        value: "test1234"
+                                                        value: "viktor"
                                                     }
                                                 }, 
                                                 left: { 
                                                     type: "string", 
                                                     data: {
-                                                        value: "test1234"
+                                                        value: "jens"
                                                     }
                                                 } 
-                                        }, 
+                                            },  
                                     },
                                     then: {
                                         type: "function",
