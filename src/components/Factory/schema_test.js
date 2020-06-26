@@ -35,11 +35,9 @@ const schema = {
 				{
 					type: "col",
 					props: {
-						span: 24
+						span: 12
                     },
-                    effect: [
-
-                    ],
+                    effect: {},
 
 					children: [
 						{
@@ -60,7 +58,93 @@ const schema = {
 							required: true,
 							defaultState: "",
 							props: {
-								label: "Room",
+								label: { type: "string", data: {value: "Hejhooj"}},
+								style: { width: "100%" }
+							},
+							actions: [],
+							bind: []
+                        },
+                        {
+							type: "Input",
+							name: "_room2",
+							scheme: {
+								state: { 
+									type: String, 
+									required: true, 
+									match: "scanner"
+								} 
+                            },
+							rules: [
+								{ path: "state", type: "Required", message: "Field is required" },
+								{ path: "state", type: "RegExp",   message: "Match not found" }
+							],
+							required: true,
+                            defaultState: {
+                                type: "string",
+                                data: { value: "hello" }
+                            },
+							props: {
+								label: { type: "string", data: { value: "Hejhooj" } },
+								style: { width: "100%" }
+							},
+							actions: [],
+							bind: []
+						},
+					]
+                },
+                {
+					type: "col",
+					props: {
+						span: 12
+                    },
+                    effect: {},
+
+					children: [
+						{
+							type: "Input",
+							name: "_yolo",
+							scheme: {
+								state: { 
+									type: String, 
+									required: true, 
+									match: "scanner"
+								} 
+                            },
+                            
+							rules: [
+								{ path: "state", type: "Required", message: "Field is required" },
+								{ path: "state", type: "RegExp",   message: "Match not found" }
+							],
+							required: true,
+							defaultState: "",
+							props: {
+								label: { type: "string", data: {value: "Wow test"}},
+								style: { width: "100%" }
+							},
+							actions: [],
+							bind: []
+                        },
+                        {
+							type: "Input",
+							name: "_room3",
+							scheme: {
+								state: { 
+									type: String, 
+									required: true, 
+									match: "scanner"
+								} 
+                            },
+							rules: [
+								{ path: "state", type: "Required", message: "Field is required" },
+								{ path: "state", type: "RegExp",   message: "Match not found" }
+							],
+							required: true,
+                            defaultState: {
+                                type: "string",
+                                data: { value: "hello" }
+                            },
+							props: {
+								label: { type: "string", data: { value: "Testing again" } },
 								style: { width: "100%" }
 							},
 							actions: [],
@@ -102,7 +186,7 @@ const schema = {
                                 data: { value: "hello" }
                             },
 							props: {
-								label: "Name",
+								label: { type: "string", data: {value: "Hejhooj"}},
                                 style: { width: "100%" }
 							},
 							actions: [],
@@ -129,7 +213,7 @@ const schema = {
 							name: "_button_join",
 							bind: [],
 							props: {
-                                label: "Join",
+                                label: { type: "string", data: {value: "Join"}},
 
                             },
                             effects: {

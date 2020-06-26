@@ -15,12 +15,56 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import ConditionEvaluation from './ConditionEvaluation'
 
+import { useDrag, useDrop } from 'react-dnd'
+
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import styled from 'styled-components'
 
 
 
 const FactoryContext = createContext()
 
 const { useSharedState } = createSharedStore({})
+
+
+const Hover = styled.div`
+	box-sizing: border-box;
+	border: 2px dashed transparent;
+	transition: border 0.1s ease-in-out;
+
+	&:hover {
+		border: 2px dashed #5050501f;
+	}
+`
+
+const IsActive = styled.div`
+	box-sizing: border-box;
+	transition: border 0.1s ease-in-out;
+	border: ${props => props.over ? "2px dashed #5050501f" : "2px dashed transparent"};
+	/* background: ${props => props.over ? "#1bc0ff40" : "unset"}; */
+	border-radius: 3px;
+	
+`
+
+
+const DroppableWrapper = (props) =>
+<Droppable droppableId={props.droppableId}>
+  {(provided, snapshot) => {
+	  console.log(provided, snapshot)
+	return (
+		<IsActive over={snapshot.isDraggingOver} className={props.className}
+			ref={provided.innerRef}
+			{...provided.droppableProps}>
+				{props.children}
+				{provided.placeholder}
+		</IsActive>
+	)
+  }}
+</Droppable>
+
+
 
 
 
@@ -76,8 +120,9 @@ const components = {
 					required={required}
 					label={props.label}
 					hasFeedback
-					validateStatus={validationStatus}
-					help={helpMessages.map((validation, i) => <div key={i} style={{ fontSize: 12 }}>{validation.message}</div>)}>
+					// validateStatus={validationStatus}
+					// help={helpMessages.map((validation, i) => <div key={i} style={{ fontSize: 12 }}>{validation.message}</div>)}
+					>
 					<Input placeholder={props.placeholder} value={state || defaultState} style={props.style} onChange={e => void setstate(e.target.value)} />
 				</Form.Item>
 			</Form>
@@ -85,6 +130,16 @@ const components = {
 	},
 	Button: ({ props, state, setstate, context, components, events }) => {
 		return <Button type="text" {...events}>{props.label}</Button>
+	},
+	OldInput: ({ props, state, setstate, context, components, events }) => {
+		return (
+	
+				<div>
+					<label htmlFor="">{props.label}</label>
+					<input type="text" {...events} value={state} onChange={e => void setstate(e.target.value)} />
+				</div>
+
+		)
 	}
 }
 
@@ -93,13 +148,52 @@ function getComponentByType(type) {
 
 	switch (type) {
 		case "row":
-			return ({ children, props }) => <Row gutter={props.gutter}>{children}</Row>
+			return ({ children, props, name, id }) => 
+			<Row gutter={props.gutter}>
+				<DroppableWrapper droppableId={id}>
+						{children}
+				</DroppableWrapper>
+			</Row>
 		case "col":
-			return ({ children, props }) => <Col span={props.span} offset={props.offset}>{children}</Col>
+			return ({ children, props, name, id,index }) => {
+				console.log("PROPS", props, name)
+				return (
+					
+					<Col span={props.span} offset={props.offset}>
+						<DroppableWrapper droppableId={id}>
+							{children}
+						</DroppableWrapper>
+					</Col>
+				)
+
+			}
 		default: {
 			if (type in components) {
 				const Component = components[type]
-				return ({ children, ...props }) => <Component {...props}  >{children}</Component>
+
+				return ({ children, ...props }) => {
+
+					return (
+						<Draggable draggableId={props.id} index={props.index}>
+						{(provided, snapshot) => {
+							const style = {
+							backgroundColor: snapshot.isDragging ? 'unset' : 'unset',
+							...provided.draggableProps.style,
+							}
+		
+							return (
+								<Hover
+									ref={provided.innerRef}
+									{...provided.draggableProps}
+									{...provided.dragHandleProps}
+									style={style}>
+									<Component {...props} >{children}</Component>
+								</Hover>
+							)
+						}}
+						</Draggable>
+					)
+				}
 			}
 			return <div>Component not found</div>
 		}
@@ -291,6 +385,16 @@ function generateEvent({
 				return generateEvent({ ...elseThen, context, dispatch, functions})
 			}
 		}
+		case "schema": {
+			const conditionEvaluation = new ConditionEvaluation(condition, context, generateEvent, dispatch, functions)
+			const result = conditionEvaluation.evaluate()
+
+			if(result) {
+				return generateEvent({ ...then, context, dispatch, functions})
+			} else {
+				return generateEvent({ ...elseThen, context, dispatch, functions})
+			}
+		}
 	}
 }
 
@@ -342,6 +446,7 @@ function Structure(comp) {
 	const {
 		type = "",
 		name = genKey() + "-" + genKey(),
+		id,
 		children = [],
 		props = {},
 		bind = [],
@@ -351,14 +456,15 @@ function Structure(comp) {
 		span = null,
 		scheme = {},
 		rules = [],
-		required = false
+		required = false,
 	} = comp.layout
 
-	const Component =                                     useMemo(() => getComponentByType(type), [])
+	const index = comp.index
+	const Component =                                     useMemo(() => getComponentByType(type), [name, id])
 	const factoryContext =                                useContext(FactoryContext)
-	const [personalState, state, setState] =              useSharedState(name, (_state) => defaultState ? generateEvent({ ...defaultState, context: { components: _state }, functions: factoryContext.functions }) : null, [name, ...bind], { filter: true })
-	const [validations, helpMessages, validationStatus] = useValidator({ components: state, state: personalState }, scheme, rules)
-	const isRequired =                                    useMemo(() => validations.some(valid => (valid.target.type === "Required" && !valid.valid)), [validationStatus])
+	const [personalState, state, setState] =              useSharedState(name, (_state) => defaultState ? generateEvent({ ...defaultState, context: { components: _state }, functions: factoryContext.functions }) : null, [name, id, ...bind], { filter: true })
+	// const [validations, helpMessages, validationStatus] = useValidator({ components: state, state: personalState }, scheme, rules)
+	// const isRequired =                                    useMemo(() => validations.some(valid => (valid.target.type === "Required" && !valid.valid)), [validationStatus])
 	const _events =                                       useComponentEvents({events, context: { components: state }, name, functions: factoryContext.functions})
 	const viewState =                                     useViewStore({ id: "1234", page: factoryContext.page})
 	
@@ -368,34 +474,104 @@ function Structure(comp) {
 	const size = span ? { span } : {}
 
 	return useMemo(() =>
-		<Component
-			{...size}
-			props={props}
-			name={name}
-			state={state[name]}
-			setstate={setState}
-			components={state}
-			rules={rules}
-			events={_events}
-			required={required || isRequired}
-			validations={validations}
-			helpMessages={helpMessages}
-			validationStatus={validationStatus}
-			children={children.map((component, key) => <Structure key={key} layout={component} />)} />,
-		[state[name], props, children])
+			<Component
+				{...size}
+				index={index}
+
+				props={{...props, label: props.label ? generateEvent({ ...props.label, context: { components: state }, functions: factoryContext.functions }) : null }}
+				name={name}
+				id={id}
+				state={state[name]}
+				setstate={setState}
+				components={state}
+				rules={rules}
+				events={_events}
+				// required={required || isRequired}
+				// validations={validations}
+				// helpMessages={helpMessages}
+				// validationStatus={validationStatus}
+				children={children.map((component, key) => <Structure key={key} index={key} layout={component} />)} />,
+		[state[name], props, children, id, name])
 }
 
 
 function Reader(props) {
 	const { schema } = props
+	const [layout, setLayout] = useState(() => addIDsToLayout(schema.layout))
+
+
+	
+	const onDragEnd = ({ source, destination }) => {
+
+
+		if (!destination) {
+		  return
+		}
+
+	
+		setLayout(_layout => {
+		  const comp = flatten(_layout)[source.droppableId].children[source.index]
+		  return move(_layout, source, destination, comp)
+		})
+	  }
+
 
 	return (
-		<FactoryContext.Provider value={{ functions: schema.functions, page: schema.name, id: genKey() + "-" + genKey() }}>
-			{schema.layout.map((component, key) => <Structure key={key} layout={component} />)}
-		</FactoryContext.Provider>
+		// <DndProvider backend={HTML5Backend}>
+			<FactoryContext.Provider value={{ functions: schema.functions, page: schema.name, id: genKey() + "-" + genKey() }}>
+				<DragDropContext onDragEnd={onDragEnd}>
+					{layout.map((component, key) => <Structure key={key} index={key} layout={component} />)}
+				</DragDropContext>
+			</FactoryContext.Provider>
+		// </DndProvider>
 	)
 }
 
+
+function addIDsToLayout(layout) {
+	return layout.map(component => {
+
+		component.id = genKey() + "-" + genKey()
+		if(component.children) {
+			component.children = addIDsToLayout(component.children)
+		}
+		return component
+	})
+}
+
+
+function move(layout, source, destination, comp) {
+	return layout.map(component => {
+
+		if(component.id === source.droppableId) {
+			if(component.children) {
+
+				component.children.splice(source.index, 1)
+			}
+		}
+		if(component.id === destination.droppableId) {
+			if(component.children) {
+				component.children.splice(destination.index, 0, comp)
+			}
+		}
+		if(component.children) {
+			move(component.children, source, destination, comp)
+		}
+		return component
+	})
+}
+
+
+function flatten(layout, compSet={}) {
+	layout.forEach(component => {
+
+		compSet[component.id] = {...component}
+		if(component.children) {
+			flatten(component.children, compSet)
+		}
+	})
+	return compSet
+}
 
 
 export default (props) => <Reader schema={schema} />

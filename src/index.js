@@ -26,7 +26,10 @@ function Root() {
 			<Router>
 				{/* <App/> */}
 				{/* <Layout/> */}
-				<Factory/>
+
+				<div style={{margin: 20}}>
+					<Factory/>
+				</div>
 			</Router>
 		</Provider>
 	)
