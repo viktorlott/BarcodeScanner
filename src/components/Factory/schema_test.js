@@ -118,7 +118,7 @@ const schema = {
 							required: true,
 							defaultState: "",
 							props: {
-								label: { type: "string", data: {value: "Wow test"}},
+								label: { type: "string", data: { value: "Wow test" } },
 								style: { width: "100%" }
 							},
 							actions: [],
@@ -228,9 +228,7 @@ const schema = {
                                                     type: "equal", 
                                                     left: { 
                                                         type: "bool", 
-                                                        data: {
-                                                            value: false
-                                                        }
+                                                        data: { value: false }
                                                     },
                                                     right: { 
                                                         type: "equal",

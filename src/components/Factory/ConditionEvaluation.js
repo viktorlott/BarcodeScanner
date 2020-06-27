@@ -1,18 +1,15 @@
-
-
+import Reference from './ReferenceType'
 
 class ConditionEvaluation {
-	constructor(event, context, generator, dispatch, functions) {
-        this.context = context
-        this.generator = generator
-        this.dispatch = dispatch
-        this.functions = functions
+	constructor(event, dependencies) {
+        this.dependencies = dependencies
 
         if(this.checkIfUnaryExpression(event)) {
             this.create(event)
         } else {
             this.operation = "none"
-            this.value = this.generator({...event, context: this.context})
+            const reference = new Reference(event, dependencies)
+            this.value = reference.evaluate()
         }
 
 	}
@@ -32,6 +29,8 @@ class ConditionEvaluation {
         return false
     }
 
+  
+
     create(event) {
         this.addOperation(event)
         this.addLeft(event.left)
@@ -43,11 +42,11 @@ class ConditionEvaluation {
     }
 
     addRight(event) {
-        this.right = new ConditionEvaluation(event, this.context, this.generator, this.dispatch, this.functions)
+        this.right = new ConditionEvaluation(event, this.dependencies)
     }
 
     addLeft(event) {
-        this.left = new ConditionEvaluation(event, this.context, this.generator, this.dispatch, this.functions)
+        this.left = new ConditionEvaluation(event, this.dependencies)
     }
 
 

@@ -13,16 +13,13 @@ import schema from './schema_test'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import ConditionEvaluation from './ConditionEvaluation'
 
-import { useDrag, useDrop } from 'react-dnd'
-
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import { DndProvider } from 'react-dnd'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components'
 
-
+import Reference from './ReferenceType'
+import isEmpty from 'lodash/isEmpty'
+import { set } from "lodash";
 
 const FactoryContext = createContext()
 
@@ -43,26 +40,33 @@ const IsActive = styled.div`
 	box-sizing: border-box;
 	transition: border 0.1s ease-in-out;
 	border: ${props => props.over ? "2px dashed #5050501f" : "2px dashed transparent"};
-	/* background: ${props => props.over ? "#1bc0ff40" : "unset"}; */
+	background: ${props => props.over ? "#eee" : "unset"};
 	border-radius: 3px;
 	
 `
 
 
-const DroppableWrapper = (props) =>
-<Droppable droppableId={props.droppableId}>
-  {(provided, snapshot) => {
-	  console.log(provided, snapshot)
+const DroppableWrapper = (props) => {
+
+
 	return (
-		<IsActive over={snapshot.isDraggingOver} className={props.className}
-			ref={provided.innerRef}
-			{...provided.droppableProps}>
-				{props.children}
-				{provided.placeholder}
-		</IsActive>
+		<Droppable droppableId={props.droppableId}>
+		{(provided, snapshot) => {
+
+			return (
+				<IsActive 
+					className={props.className}
+					over={snapshot.isDraggingOver} 
+					ref={provided.innerRef}
+					{...provided.droppableProps}>
+						{props.children}
+						{provided.placeholder}
+				</IsActive>
+			)
+		}}
+		</Droppable>
 	)
-  }}
-</Droppable>
+}
 
 
 
@@ -133,7 +137,6 @@ const components = {
 	},
 	OldInput: ({ props, state, setstate, context, components, events }) => {
 		return (
-	
 				<div>
 					<label htmlFor="">{props.label}</label>
 					<input type="text" {...events} value={state} onChange={e => void setstate(e.target.value)} />
@@ -155,10 +158,8 @@ function getComponentByType(type) {
 				</DroppableWrapper>
 			</Row>
 		case "col":
-			return ({ children, props, name, id,index }) => {
-				console.log("PROPS", props, name)
+			return ({ children, props, name, id, index }) => {
 				return (
-					
 					<Col span={props.span} offset={props.offset}>
 						<DroppableWrapper droppableId={id}>
 							{children}
@@ -180,7 +181,7 @@ function getComponentByType(type) {
 							backgroundColor: snapshot.isDragging ? 'unset' : 'unset',
 							...provided.draggableProps.style,
 							}
-		
+
 							return (
 								<Hover
 									ref={provided.innerRef}
@@ -280,125 +281,7 @@ function createSharedStore(init, name) {
 
 
 
-
-
-
-function generateEvent({
-	type, 
-	name, 
-	returns, 
-	action, 
-	data, 
-	arguments: params, 
-	anonymous, 
-	context, 
-	dispatch, 
-	functions,
-	then, 
-	elseThen,
-	condition
-}) {
-	switch(type) {
-		case "dispatch": {
-
-			if(name && actions[name]) {
-				const args = params.map(arg => generateEvent({...arg, context, dispatch, functions}))
-				return dispatch(actions[name](...args))
-			}
-			return dispatch(generateEvent({...action, context}))
-		}
-		case "function": {
-			let storedFunction = name ? functions.find(func => func.name === name) : null
-			if(storedFunction) {
-				return generateEvent({...storedFunction.function, context, dispatch, functions})
-			}
-			return anonymous ? (() => returns ? generateEvent({...returns, context, dispatch, functions}) : null)() : () => returns ? generateEvent({...returns, context, dispatch, functions}) : null
-		}
-		case "anonymous": {
-			return returns ? generateEvent({...returns, context, dispatch, functions}) : null
-		}
-		case "component": {
-			let _data = null
-			if(Array.isArray(data)) {
-				for(let keyval of data) {
-					_data = keyval.name ? get(context, ["components",keyval.name], null) : keyval.value
-				}
-			} else {
-				_data = data.name ? get(context, ["components",data.name], null) : data.value
-			}
-			return _data
-		}
-		case "object": {
-			let _data = {}
-			for(let keyval of data) {
-				_data[keyval.key] = keyval.path ? get(context, keyval.path, null) : keyval.value
-			}
-			return _data
-		}
-		case "array": {
-			let _data = []
-			for(let keyval of data) {
-				_data.push(keyval.path ? get(context, keyval.path, null) : keyval.value)
-			}
-			return _data
-		}
-		case "string": {
-			let _data = ""
-			if(Array.isArray(data)) {
-				for(let keyval of data) {
-					_data = keyval.path ? get(context, keyval.path, null) : keyval.value
-				}
-			} else {
-				_data = data.path ? get(context, data.path, null) : data.value
-			}
-			return _data
-		}
-		case "number": {
-			let _data = 0
-			if(Array.isArray(data)) {
-				for(let keyval of data) {
-					_data = keyval.path ? get(context, keyval.path, null) : keyval.value
-				}
-			} else {
-				_data = data.path ? get(context, data.path, null) : data.value
-			}
-			return Number(_data)
-		}
-		case "bool": case "boolean": {
-			let _data = false
-			if(Array.isArray(data)) {
-				for(let keyval of data) {
-					_data = keyval.path ? get(context, keyval.path, null) : keyval.value
-				}
-			} else {
-				_data = data.path ? get(context, data.path, null) : data.value
-			}
-			return !!_data
-		}
-		case "statement": {
-			const conditionEvaluation = new ConditionEvaluation(condition, context, generateEvent, dispatch, functions)
-			const result = conditionEvaluation.evaluate()
-
-			if(result) {
-				return generateEvent({ ...then, context, dispatch, functions})
-			} else {
-				return generateEvent({ ...elseThen, context, dispatch, functions})
-			}
-		}
-		case "schema": {
-			const conditionEvaluation = new ConditionEvaluation(condition, context, generateEvent, dispatch, functions)
-			const result = conditionEvaluation.evaluate()
-
-			if(result) {
-				return generateEvent({ ...then, context, dispatch, functions})
-			} else {
-				return generateEvent({ ...elseThen, context, dispatch, functions})
-			}
-		}
-	}
-}
-
-function useComponentEvents({events, context, name, functions}) {
+function useComponentEvents({events, context, id, name, functions, actions}) {
 	const dispatch = useDispatch()
 
 	const _events = useMemo(() => {
@@ -406,11 +289,11 @@ function useComponentEvents({events, context, name, functions}) {
 		for(let [eventName, event] of Object.entries(events)) {
 			transformedEvents[eventName] = (e) => {
 				e.presist && e.presist()
-				event.forEach(ev => void generateEvent({...ev, context, dispatch, functions })  )
+				event.forEach(ev => void Reference.evaluate(ev, { context, dispatch, functions, actions }))
 			}
 		}
 		return transformedEvents
-	},[events, context.components, name])
+	},[events, context.components, name, id])
 	
 	return _events
 }
@@ -422,12 +305,12 @@ function useEffectHandlers(effects, state, factoryContext) {
 
 	useEffect(() => {
 		if(effects && effects.onMount) {
-			effects.onMount.map(effect => generateEvent({...effect, context: { components: state }, functions: factoryContext.functions, dispatch }))
+			effects.onMount.map(effect => Reference.evaluate(effect, {context: { components: state }, functions: factoryContext.functions, dispatch, actions}))
 		}
 
 		return () => {
 			if(effects && effects.onUnMount) {
-				effects.onUnMount.map(effect => generateEvent({...effect, context: { components: state }, functions: factoryContext.functions, dispatch }))
+				effects.onUnMount.map(effect =>  Reference.evaluate(effect, {context: { components: state }, functions: factoryContext.functions, dispatch, actions}))
 			}
 		}
 	},[])
@@ -435,7 +318,7 @@ function useEffectHandlers(effects, state, factoryContext) {
 
 	useEffect(() => {
 		if(effects && effects.onUpdate) {
-			effects.onUpdate.map(effect => generateEvent({...effect, context: { components: state, hasMounted: hasMounted.current }, functions: factoryContext.functions, dispatch }))
+			effects.onUpdate.map(effect =>  Reference.evaluate(effect, {context: { components: state }, functions: factoryContext.functions, dispatch, actions}))
 		}
 	})
 }
@@ -462,11 +345,11 @@ function Structure(comp) {
 	const index = comp.index
 	const Component =                                     useMemo(() => getComponentByType(type), [name, id])
 	const factoryContext =                                useContext(FactoryContext)
-	const [personalState, state, setState] =              useSharedState(name, (_state) => defaultState ? generateEvent({ ...defaultState, context: { components: _state }, functions: factoryContext.functions }) : null, [name, id, ...bind], { filter: true })
+	const [personalState, state, setState] =              useSharedState(name, (_state) => defaultState ?  Reference.evaluate(defaultState, {context: { components: _state }, functions: factoryContext.functions, actions }) : null, [name, id, ...bind], { filter: true })
 	// const [validations, helpMessages, validationStatus] = useValidator({ components: state, state: personalState }, scheme, rules)
 	// const isRequired =                                    useMemo(() => validations.some(valid => (valid.target.type === "Required" && !valid.valid)), [validationStatus])
-	const _events =                                       useComponentEvents({events, context: { components: state }, name, functions: factoryContext.functions})
-	const viewState =                                     useViewStore({ id: "1234", page: factoryContext.page})
+	const _events =                                       useComponentEvents({events, context: { components: state }, name, functions: factoryContext.functions, actions})
+	const viewState =                                     useViewStore({ id: "1234", page: factoryContext.page })
 	
 
 	useEffectHandlers(effects, state, factoryContext)
@@ -478,7 +361,7 @@ function Structure(comp) {
 				{...size}
 				index={index}
 
-				props={{...props, label: props.label ? generateEvent({ ...props.label, context: { components: state }, functions: factoryContext.functions }) : null }}
+				props={{...props, label: props.label ? Reference.evaluate(props.label, {  context: { components: state }, functions: factoryContext.functions, actions }) : null }}
 				name={name}
 				id={id}
 				state={state[name]}
@@ -496,82 +379,95 @@ function Structure(comp) {
 
 
 function Reader(props) {
-	const { schema } = props
-	const [layout, setLayout] = useState(() => addIDsToLayout(schema.layout))
+	const [layout, setLayout] = useState(props.layout)
 
 
-	
 	const onDragEnd = ({ source, destination }) => {
-
 
 		if (!destination) {
 		  return
 		}
 
-	
-		setLayout(_layout => {
-		  const comp = flatten(_layout)[source.droppableId].children[source.index]
-		  return move(_layout, source, destination, comp)
-		})
-	  }
+		setLayout(_layout => _layout.move(source, destination))
+	}
 
 
 	return (
-		// <DndProvider backend={HTML5Backend}>
-			<FactoryContext.Provider value={{ functions: schema.functions, page: schema.name, id: genKey() + "-" + genKey() }}>
-				<DragDropContext onDragEnd={onDragEnd}>
-					{layout.map((component, key) => <Structure key={key} index={key} layout={component} />)}
-				</DragDropContext>
-			</FactoryContext.Provider>
-		// </DndProvider>
+			
+		<DragDropContext onDragEnd={onDragEnd}>
+			{layout.children.map((component, key) => <Structure key={key} index={key} layout={component} />)}
+		</DragDropContext>
 	)
 }
 
 
-function addIDsToLayout(layout) {
-	return layout.map(component => {
 
-		component.id = genKey() + "-" + genKey()
-		if(component.children) {
-			component.children = addIDsToLayout(component.children)
-		}
-		return component
-	})
-}
+class Layout {
+	constructor(children) {
+		this.children = children
+	}
 
+	static create(children) {
+		return new Layout(Layout._addIDsToLayout(children))
+	}
 
-function move(layout, source, destination, comp) {
-	return layout.map(component => {
-
-		if(component.id === source.droppableId) {
+	static _addIDsToLayout(children) {
+		return children.map(component => {
+	
+			component.id = genKey() + "-" + genKey()
 			if(component.children) {
-
-				component.children.splice(source.index, 1)
+				component.children = this._addIDsToLayout(component.children)
 			}
-		}
-		if(component.id === destination.droppableId) {
+			return component
+		})
+	}
+
+	move(source, destination) {
+		const comp = this._flatten(this.children)[source.droppableId].children[source.index]
+		return new Layout(this._move(this.children, source, destination, comp))
+	}
+
+	_move(children, source, destination, comp) {
+		return children.map(component => {
+	
+			if(component.id === source.droppableId) {
+				if(component.children) {
+	
+					component.children.splice(source.index, 1)
+				}
+			}
+			if(component.id === destination.droppableId) {
+				if(component.children) {
+					component.children.splice(destination.index, 0, comp)
+				}
+			}
 			if(component.children) {
-				component.children.splice(destination.index, 0, comp)
+				this._move(component.children, source, destination, comp)
 			}
-		}
-		if(component.children) {
-			move(component.children, source, destination, comp)
-		}
-		return component
-	})
+			return component
+		})
+
+	}
+
+	_flatten(children, compSet={}) {
+		children.forEach(component => {
+	
+			compSet[component.id] = {...component}
+			if(component.children) {
+				this._flatten(component.children, compSet)
+			}
+		})
+		return compSet
+	}
+
 }
 
 
-function flatten(layout, compSet={}) {
-	layout.forEach(component => {
 
-		compSet[component.id] = {...component}
-		if(component.children) {
-			flatten(component.children, compSet)
-		}
-	})
-	return compSet
+export default (props) => {
+ return (
+	<FactoryContext.Provider value={{ functions: schema.functions, page: schema.name, id: genKey() + "-" + genKey() }}>
+ 		<Reader schema={schema} layout={Layout.create(schema.layout)} />
+	</FactoryContext.Provider>
+ )
 }
-
-
-export default (props) => <Reader schema={schema} />
